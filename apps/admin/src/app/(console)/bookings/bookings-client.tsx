@@ -6,8 +6,6 @@ import { toast } from "sonner";
 import {
   CalendarCheck2,
   CalendarDays,
-  ChevronLeft,
-  ChevronRight,
   Copy,
   List,
   MapPin,
@@ -19,9 +17,10 @@ import { DataTable, type Column } from "@/components/ui/data-table";
 import { Button, Field, Input } from "@/components/ui/primitives";
 import { BookingStatusPill, BOOKING_STATUS } from "@/components/ui/status";
 import { ConfirmDialog, Drawer } from "@/components/ui/overlays";
-import { cn, fmtDate, fmtDateTime, fmtTime, istDayStart, relTime, WEEKDAYS } from "@/lib/utils";
+import { cn, fmtDate, fmtDateTime, fmtTime, relTime } from "@/lib/utils";
 import { cancelBooking, confirmBooking, markOutcome, rescheduleBooking, retryMeetLink, type ActionResult } from "./actions";
 import { solarIcon } from "@/components/icons/solar";
+import { BookingCalendar } from "./booking-calendar";
 
 type View = "attention" | "upcoming" | "past" | "all" | "calendar";
 
@@ -125,7 +124,7 @@ export function BookingsClient({ rows, now, initialView }: { rows: BookingRow[];
       </div>
 
       {view === "calendar" ? (
-        <WeekCalendar rows={rows} now={now} onOpen={setOpenId} />
+        <BookingCalendar rows={rows} now={now} onOpen={setOpenId} />
       ) : (
         <DataTable
           key={view}
@@ -376,130 +375,3 @@ function BookingDrawer({ booking: b, now, onClose }: { booking: BookingRow | nul
     </Drawer>
   );
 }
-
-function WeekCalendar({ rows, now, onOpen }: { rows: BookingRow[]; now: number; onOpen: (id: string) => void }) {
-  const DAY = 86_400_000;
-  const todayStart = istDayStart(now);
-  const [weekStart, setWeekStart] = React.useState(() => {
-    const dow = new Date(todayStart + 5.5 * 3_600_000).getUTCDay();
-    return todayStart - ((dow + 6) % 7) * DAY; // Monday
-  });
-  const HOURS = Array.from({ length: 11 }, (_, i) => 9 + i); // 9am-7pm
-  const ROW_H = 52;
-  const days = Array.from({ length: 7 }, (_, i) => weekStart + i * DAY);
-  const inWeek = rows.filter((r) => r.start >= weekStart && r.start < weekStart + 7 * DAY && r.status !== "cancelled");
-
-  return (
-    <div className="overflow-hidden rounded-[var(--radius-panel)] border border-line bg-surface">
-      <div className="flex items-center gap-2 border-b border-line px-4 py-3">
-        <Button variant="ghost" size="icon" aria-label="Previous week" onClick={() => setWeekStart((w) => w - 7 * DAY)}>
-          <ChevronLeft className="size-4" strokeWidth={1.75} />
-        </Button>
-        <Button variant="ghost" size="icon" aria-label="Next week" onClick={() => setWeekStart((w) => w + 7 * DAY)}>
-          <ChevronRight className="size-4" strokeWidth={1.75} />
-        </Button>
-        <p className="text-[14px] font-medium text-ink">
-          {fmtDate(days[0], { day: "numeric", month: "short" })} – {fmtDate(days[6], { day: "numeric", month: "short", year: "numeric" })}
-        </p>
-        <Button
-          size="sm"
-          className="ml-2"
-          onClick={() => {
-            const dow = new Date(todayStart + 5.5 * 3_600_000).getUTCDay();
-            setWeekStart(todayStart - ((dow + 6) % 7) * DAY);
-          }}
-        >
-          This week
-        </Button>
-        <div className="ml-auto hidden items-center gap-3 text-[12px] text-ink-2 md:flex">
-          <Legend className="bg-ok-soft border-ok/40" label="Confirmed" />
-          <Legend className="bg-warn-soft border-warn/40" label="Requested" />
-          <Legend className="bg-bad-soft border-bad/40" label="Link failed" />
-          <Legend className="bg-sunken border-line-strong" label="Done / no-show" />
-        </div>
-      </div>
-      <div className="overflow-x-auto">
-        <div className="grid min-w-[880px]" style={{ gridTemplateColumns: "56px repeat(7, minmax(0,1fr))" }}>
-          <div className="border-b border-line" />
-          {days.map((d) => {
-            const isToday = d === todayStart;
-            const dow = new Date(d + 5.5 * 3_600_000).getUTCDay();
-            return (
-              <div key={d} className="border-b border-l border-line px-2 py-2 text-center">
-                <p className="text-[11.5px] uppercase tracking-[0.06em] text-ink-3">{WEEKDAYS[dow]}</p>
-                <p className={cn("num mx-auto mt-0.5 grid size-7 place-items-center rounded-full text-[13px]", isToday ? "bg-ink font-semibold text-paper" : "text-ink")}>
-                  {fmtDate(d, { day: "numeric" })}
-                </p>
-              </div>
-            );
-          })}
-          <div className="relative">
-            {HOURS.map((h) => (
-              <div key={h} className="num h-[52px] pr-2 pt-1 text-right text-[11px] text-ink-3">
-                {h > 12 ? h - 12 : h}
-                {h >= 12 ? "pm" : "am"}
-              </div>
-            ))}
-          </div>
-          {days.map((d) => {
-            const items = inWeek.filter((r) => r.start >= d && r.start < d + DAY);
-            return (
-              <div key={d} className="relative border-l border-line" style={{ height: HOURS.length * ROW_H }}>
-                {HOURS.map((h, i) => (
-                  <div key={h} className="absolute inset-x-0 border-t border-line/70" style={{ top: i * ROW_H }} />
-                ))}
-                {d === todayStart && now >= d + 9 * 3_600_000 && now < d + 20 * 3_600_000 ? (
-                  <div className="absolute inset-x-0 z-[1] h-px bg-bad" style={{ top: ((now - d) / 3_600_000 - 9) * ROW_H }}>
-                    <span className="absolute -left-1 -top-1 size-2 rounded-full bg-bad" />
-                  </div>
-                ) : null}
-                {items.map((r, idx) => {
-                  const startH = (r.start - d) / 3_600_000;
-                  const top = (startH - 9) * ROW_H;
-                  const h = Math.max(26, ((r.end - r.start) / 3_600_000) * ROW_H - 4);
-                  if (top < 0 || top > HOURS.length * ROW_H) return null;
-                  const overlap = items.filter((o) => o.start < r.end && r.start < o.end);
-                  const lane = overlap.indexOf(r);
-                  const width = 100 / overlap.length;
-                  const tone =
-                    r.status === "confirmed"
-                      ? "bg-ok-soft border-ok/40"
-                      : r.status === "requested"
-                        ? "bg-warn-soft border-warn/40"
-                        : r.status === "meet_failed"
-                          ? "bg-bad-soft border-bad/40"
-                          : "bg-sunken border-line-strong opacity-80";
-                  return (
-                    <button
-                      key={r.id}
-                      onClick={() => onOpen(r.id)}
-                      className={cn("absolute overflow-hidden rounded-[6px] border px-1.5 py-1 text-left transition-transform hover:z-[2] hover:-translate-y-px", tone)}
-                      style={{ top: top + 2, height: h, left: `calc(${lane * width}% + 3px)`, width: `calc(${width}% - 6px)`, zIndex: idx }}
-                      title={`${r.targetName} · ${r.learnerName} · ${fmtTime(r.start)}`}
-                    >
-                      <p className="num truncate text-[10.5px] text-ink-2">{fmtTime(r.start)}</p>
-                      <p className="truncate text-[11.5px] font-medium leading-tight text-ink">{r.targetName}</p>
-                    </button>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      {inWeek.length === 0 ? (
-        <p className="border-t border-line px-4 py-3 text-[13px] text-ink-2">No bookings this week.</p>
-      ) : null}
-    </div>
-  );
-}
-
-function Legend({ className, label }: { className: string; label: string }) {
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      <span className={cn("size-3 rounded-[3px] border", className)} />
-      {label}
-    </span>
-  );
-}
-
