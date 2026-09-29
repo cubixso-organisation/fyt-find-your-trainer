@@ -16,18 +16,23 @@
  * Restyled to the console design system: paper/ink neutrals, status by
  * soft fill + inset ring + icon (never colour alone), ink for "today",
  * transform-only motion.
+ *
+ * Filters (listing, type, mode, status) apply to all three views and are
+ * saved per browser next to the view choice. When they hide every booking in
+ * the visible period, the grid is replaced by an empty state that says so.
  */
 
 import * as React from "react";
-import { ChevronLeft, ChevronRight, MapPin, Video } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, MapPin, Video } from "lucide-react";
 import type { BookingRow } from "@/lib/data/queries";
-import type { BookingStatus } from "@/lib/data/types";
-import { Button, EmptyState } from "@/components/ui/primitives";
+import type { BookingStatus, BookingTarget } from "@/lib/data/types";
+import { Button, EmptyState, Select } from "@/components/ui/primitives";
 import { BookingStatusPill, BOOKING_STATUS } from "@/components/ui/status";
 import { Segmented } from "@/components/ui/choice";
 import { useLocalStorage } from "@/components/ui/use-local-storage";
 import { solarIcon } from "@/components/icons/solar";
 import { cn, fmtDate, fmtTime, istDayStart, WEEKDAYS } from "@/lib/utils";
+import { TARGET_LABEL } from "./bookings-csv";
 
 type Mode = "day" | "week" | "month";
 const MODES = ["day", "week", "month"] as const;
@@ -56,6 +61,26 @@ const ICON_TONE: Record<BookingStatus, string> = {
 /** Order of the month-cell status mix: what needs action first. */
 const MIX_ORDER: BookingStatus[] = ["meet_failed", "requested", "confirmed", "completed", "no_show"];
 
+/* ---------- Filters ---------- */
+
+const ALL = "all";
+const TARGETS: BookingTarget[] = ["course", "trainer", "mentor", "consultant"];
+const TARGET_GROUP: Record<BookingTarget, string> = { course: "Courses", trainer: "Trainers", mentor: "Mentors", consultant: "Consultants" };
+const TYPE_VALUES = [ALL, ...TARGETS] as const;
+type TypeFilter = (typeof TYPE_VALUES)[number];
+const MODE_VALUES = [ALL, "online", "offline"] as const;
+type ModeFilter = (typeof MODE_VALUES)[number];
+const MODE_LABEL = { online: "Online", offline: "In person" } as const;
+/** Cancelled bookings never reach the calendar, so they are not a status choice. */
+const STATUS_CHOICES: BookingStatus[] = ["requested", "confirmed", "meet_failed", "completed", "no_show"];
+const STATUS_VALUES = [ALL, ...STATUS_CHOICES] as const;
+type StatusFilter = (typeof STATUS_VALUES)[number];
+
+const listingKey = (r: Pick<BookingRow, "targetType" | "targetId">) => `${r.targetType}:${r.targetId}`;
+
+const filterSelect = "h-8 w-auto min-w-[128px] text-[13px]";
+const filterOn = "border-line-strong bg-sunken font-medium text-ink";
+
 function parts(ms: number) {
   const d = new Date(ms + IST);
   return { y: d.getUTCFullYear(), m: d.getUTCMonth(), dow: d.getUTCDay() };
@@ -67,7 +92,18 @@ function monthStart(y: number, m: number) {
   return Date.UTC(y, m, 1) - IST;
 }
 
-export function BookingCalendar({ rows, now, onOpen }: { rows: BookingRow[]; now: number; onOpen: (id: string) => void }) {
+export function BookingCalendar({
+  rows,
+  now,
+  onOpen,
+  onExport,
+}: {
+  rows: BookingRow[];
+  now: number;
+  onOpen: (id: string) => void;
+  /** Receives exactly the bookings the calendar shows for the visible period. */
+  onExport?: (rows: BookingRow[]) => void;
+}) {
   const todayStart = istDayStart(now);
   const [mode, setMode] = useLocalStorage<Mode>("tp-bookings-calendar", "week", MODES);
   const [anchor, setAnchor] = React.useState(todayStart);
@@ -75,8 +111,64 @@ export function BookingCalendar({ rows, now, onOpen }: { rows: BookingRow[]; now
   // Cancelled bookings free the slot, so the calendar leaves them out.
   const live = React.useMemo(() => rows.filter((r) => r.status !== "cancelled").sort((a, b) => a.start - b.start), [rows]);
 
+  // Listings that actually have (non-cancelled) bookings, grouped by type, A–Z.
+  const listings = React.useMemo(() => {
+    const byKey = new Map<string, { key: string; type: BookingTarget; name: string }>();
+    for (const r of live) byKey.set(listingKey(r), { key: listingKey(r), type: r.targetType, name: r.targetName });
+    const all = [...byKey.values()].sort((a, b) => a.name.localeCompare(b.name));
+    return {
+      groups: TARGETS.map((t) => ({ type: t, items: all.filter((l) => l.type === t) })).filter((g) => g.items.length),
+      values: [ALL, ...all.map((l) => l.key)],
+      names: new Map(all.map((l) => [l.key, l.name])),
+    };
+  }, [live]);
+
+  // Saved per browser next to the view choice. A saved listing that no longer
+  // has bookings falls back to "all" instead of silently hiding everything.
+  const [fListing, setFListing] = useLocalStorage<string>("tp-bookings-calendar-listing", ALL, listings.values);
+  const [fType, setFType] = useLocalStorage<TypeFilter>("tp-bookings-calendar-type", ALL, TYPE_VALUES);
+  const [fMode, setFMode] = useLocalStorage<ModeFilter>("tp-bookings-calendar-mode", ALL, MODE_VALUES);
+  const [fStatus, setFStatus] = useLocalStorage<StatusFilter>("tp-bookings-calendar-status", ALL, STATUS_VALUES);
+  const applied = [
+    fListing !== ALL ? listings.names.get(fListing) : null,
+    fType !== ALL ? TARGET_LABEL[fType] : null,
+    fMode !== ALL ? MODE_LABEL[fMode] : null,
+    fStatus !== ALL ? BOOKING_STATUS[fStatus].label : null,
+  ].filter((x): x is string => !!x);
+  const activeCount = applied.length;
+  const clearFilters = () => {
+    setFListing(ALL);
+    setFType(ALL);
+    setFMode(ALL);
+    setFStatus(ALL);
+  };
+
+  const shown = React.useMemo(
+    () =>
+      live.filter(
+        (r) =>
+          (fListing === ALL || listingKey(r) === fListing) &&
+          (fType === ALL || r.targetType === fType) &&
+          (fMode === ALL || r.mode === fMode) &&
+          (fStatus === ALL || r.status === fStatus),
+      ),
+    [live, fListing, fType, fMode, fStatus],
+  );
+
   const { y, m } = parts(anchor);
   const weekStart = mondayOf(anchor);
+
+  // The visible period, as drawn (the month grid includes the edge weeks).
+  const gridStart = mondayOf(monthStart(y, m));
+  const gridWeeks = Math.ceil((monthStart(y, m + 1) - gridStart) / DAY / 7);
+  const [pFrom, pTo] =
+    mode === "day" ? [anchor, anchor + DAY] : mode === "week" ? [weekStart, weekStart + 7 * DAY] : [gridStart, gridStart + gridWeeks * 7 * DAY];
+  const inPeriod = (r: BookingRow) => r.start >= pFrom && r.start < pTo;
+  const shownInPeriod = shown.filter(inPeriod);
+  const liveInPeriod = live.filter(inPeriod).length;
+  const filteredOut = activeCount > 0 && shownInPeriod.length === 0;
+  // Nearest matching booking outside the period: the next one, else the latest before.
+  const nearest = filteredOut ? (shown.find((r) => r.start >= pTo) ?? [...shown].reverse().find((r) => r.start < pFrom)) : undefined;
 
   const step = (dir: 1 | -1) => {
     if (mode === "day") setAnchor((a) => a + dir * DAY);
@@ -102,6 +194,7 @@ export function BookingCalendar({ rows, now, onOpen }: { rows: BookingRow[]; now
   const unit = mode === "day" ? "day" : mode === "week" ? "week" : "month";
   const showingToday =
     mode === "day" ? anchor === todayStart : mode === "week" ? weekStart === mondayOf(todayStart) : parts(todayStart).y === y && parts(todayStart).m === m;
+  const unitPhrase = mode === "day" ? "on this day" : `this ${unit}`;
 
   return (
     <div className="overflow-hidden rounded-[var(--radius-panel)] border border-line bg-surface">
@@ -134,19 +227,120 @@ export function BookingCalendar({ rows, now, onOpen }: { rows: BookingRow[]; now
         </div>
       </div>
 
-      {mode === "month" ? (
-        <MonthGrid rows={live} y={y} m={m} todayStart={todayStart} onOpen={onOpen} onDay={drillDay} />
+      <div role="group" aria-label="Calendar filters" className="flex flex-wrap items-center gap-2 border-b border-line bg-sunken/30 px-4 py-2.5">
+        <Select
+          aria-label="Listing"
+          value={fListing}
+          onChange={(e) => setFListing(e.target.value)}
+          className={cn(filterSelect, "max-w-[190px]", fListing !== ALL && filterOn)}
+        >
+          <option value={ALL}>Listing: All</option>
+          {listings.groups.map((g) => (
+            <optgroup key={g.type} label={TARGET_GROUP[g.type]}>
+              {g.items.map((l) => (
+                <option key={l.key} value={l.key}>
+                  {l.name}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </Select>
+        <Select aria-label="Booking type" value={fType} onChange={(e) => setFType(e.target.value as TypeFilter)} className={cn(filterSelect, fType !== ALL && filterOn)}>
+          <option value={ALL}>Type: All</option>
+          {TARGETS.map((t) => (
+            <option key={t} value={t}>
+              Type: {TARGET_LABEL[t]}
+            </option>
+          ))}
+        </Select>
+        <Select aria-label="Mode" value={fMode} onChange={(e) => setFMode(e.target.value as ModeFilter)} className={cn(filterSelect, fMode !== ALL && filterOn)}>
+          <option value={ALL}>Mode: All</option>
+          <option value="online">Mode: Online</option>
+          <option value="offline">Mode: In person</option>
+        </Select>
+        <Select aria-label="Status" value={fStatus} onChange={(e) => setFStatus(e.target.value as StatusFilter)} className={cn(filterSelect, fStatus !== ALL && filterOn)}>
+          <option value={ALL}>Status: All</option>
+          {STATUS_CHOICES.map((s) => (
+            <option key={s} value={s}>
+              Status: {BOOKING_STATUS[s].label}
+            </option>
+          ))}
+        </Select>
+        {activeCount ? (
+          <>
+            <span className="inline-flex h-6 items-center gap-1 rounded-[4px] bg-ink px-2 text-[12px] font-medium text-paper">
+              <span className="num">{activeCount}</span> {activeCount === 1 ? "filter" : "filters"}
+            </span>
+            <Button variant="ghost" size="sm" className="h-7 px-2 text-[12.5px]" onClick={clearFilters}>
+              Clear
+            </Button>
+          </>
+        ) : null}
+        <div className="ml-auto flex items-center gap-3">
+          <span className="num whitespace-nowrap text-[12.5px] text-ink-3" aria-live="polite" title={`Bookings shown ${unitPhrase}`}>
+            {activeCount ? (
+              <>
+                <span className="font-medium text-ink-2">{shownInPeriod.length}</span> of {liveInPeriod}
+              </>
+            ) : (
+              <>{liveInPeriod} shown</>
+            )}
+            <span className="sr-only"> {unitPhrase}</span>
+          </span>
+          {onExport ? (
+            <Button
+              size="sm"
+              disabled={!shownInPeriod.length}
+              onClick={() => onExport(shownInPeriod)}
+              title={`Exports the ${shownInPeriod.length} ${shownInPeriod.length === 1 ? "booking" : "bookings"} shown ${unitPhrase}${activeCount ? ", with these filters" : ""}. Cancelled bookings are not in the calendar.`}
+            >
+              <Download className="size-4" strokeWidth={1.6} aria-hidden /> Export CSV
+            </Button>
+          ) : null}
+        </div>
+      </div>
+
+      {filteredOut ? (
+        <EmptyState
+          icon={solarIcon("magnifer-bold-duotone")}
+          title={`No bookings match these filters ${unitPhrase}`}
+          body={
+            <>
+              Filtered to {applied.join(" · ")}.{" "}
+              {liveInPeriod
+                ? `${mode === "day" ? "This day" : `This ${unit}`} has ${liveInPeriod} ${liveInPeriod === 1 ? "booking" : "bookings"}, but none match.`
+                : `There are no bookings ${unitPhrase} at all.`}{" "}
+              {nearest
+                ? `${shown.length} matching ${shown.length === 1 ? "booking falls" : "bookings fall"} in other periods.`
+                : "Nothing matches in any period either."}
+            </>
+          }
+          action={
+            <div className="flex flex-wrap gap-2 sm:justify-center">
+              <Button size="sm" onClick={clearFilters}>
+                Clear filters
+              </Button>
+              {nearest ? (
+                <Button size="sm" variant="ghost" onClick={() => setAnchor(istDayStart(nearest.start))}>
+                  Go to {fmtDate(nearest.start, { day: "numeric", month: "short", year: "numeric" })}
+                </Button>
+              ) : null}
+            </div>
+          }
+        />
+      ) : mode === "month" ? (
+        <MonthGrid rows={shown} y={y} m={m} todayStart={todayStart} onOpen={onOpen} onDay={drillDay} />
       ) : mode === "week" ? (
         <TimeGrid
           days={Array.from({ length: 7 }, (_, i) => weekStart + i * DAY)}
-          rows={live}
+          rows={shown}
           now={now}
           todayStart={todayStart}
           onOpen={onOpen}
           onDay={drillDay}
         />
       ) : (
-        <DayView day={anchor} rows={live} now={now} todayStart={todayStart} onOpen={onOpen} />
+        <DayView day={anchor} rows={shown} now={now} todayStart={todayStart} onOpen={onOpen} />
       )}
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line px-4 py-2.5 text-[12px] text-ink-2">

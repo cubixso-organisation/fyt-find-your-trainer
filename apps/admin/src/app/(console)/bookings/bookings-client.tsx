@@ -7,6 +7,7 @@ import {
   CalendarCheck2,
   CalendarDays,
   Copy,
+  Download,
   List,
   MapPin,
   RefreshCw,
@@ -21,10 +22,9 @@ import { cn, fmtDate, fmtDateTime, fmtTime, relTime } from "@/lib/utils";
 import { cancelBooking, confirmBooking, markOutcome, rescheduleBooking, retryMeetLink, type ActionResult } from "./actions";
 import { solarIcon } from "@/components/icons/solar";
 import { BookingCalendar } from "./booking-calendar";
+import { downloadBookingsCsv, TARGET_LABEL } from "./bookings-csv";
 
 type View = "attention" | "upcoming" | "past" | "all" | "calendar";
-
-const TARGET_LABEL: Record<string, string> = { course: "Course demo", trainer: "Trainer 1-on-1", mentor: "Mentorship", consultant: "Consultation" };
 
 export function BookingsClient({ rows, now, initialView }: { rows: BookingRow[]; now: number; initialView: View }) {
   const [view, setView] = React.useState<View>(initialView);
@@ -124,7 +124,7 @@ export function BookingsClient({ rows, now, initialView }: { rows: BookingRow[];
       </div>
 
       {view === "calendar" ? (
-        <BookingCalendar rows={rows} now={now} onOpen={setOpenId} />
+        <BookingCalendar rows={rows} now={now} onOpen={setOpenId} onExport={downloadBookingsCsv} />
       ) : (
         <DataTable
           key={view}
@@ -159,6 +159,16 @@ export function BookingsClient({ rows, now, initialView }: { rows: BookingRow[];
               test: (r, v) => r.mode === v,
             },
           ]}
+          toolbar={
+            <Button
+              size="sm"
+              disabled={!sets[view].length}
+              onClick={() => downloadBookingsCsv(sets[view])}
+              title={`Exports all ${sets[view].length} bookings in this tab. Search and filters are not applied to the file.`}
+            >
+              <Download className="size-4" strokeWidth={1.6} aria-hidden /> Export CSV
+            </Button>
+          }
           empty={
             view === "attention"
               ? { icon: solarIcon("checklist-minimalistic-bold-duotone"), title: "Nothing needs action", body: "New requests and failed Meet links from the app land here first." }
