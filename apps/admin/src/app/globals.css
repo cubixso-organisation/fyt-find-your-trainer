@@ -165,8 +165,10 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
+  /* `@theme inline` tokens are substituted into utilities, not emitted as
+     custom properties, so base rules name the next/font variables directly. */
   body {
-    font-family: var(--font-sans);
+    font-family: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
     font-size: 14px;
     line-height: 1.5;
     background: var(--paper);
@@ -182,7 +184,7 @@
   }
   button, [role="button"], a, summary, label[for], select { cursor: pointer; }
   button:disabled { cursor: not-allowed; }
-  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .num { font-family: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace; font-variant-numeric: tabular-nums; }
 }
 
 @media (prefers-reduced-motion: reduce) {
