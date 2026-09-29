@@ -13,7 +13,22 @@ const g = globalThis as unknown as { __tpStore?: Dataset };
 
 export function db(): Dataset {
   g.__tpStore ??= buildSeed();
-  return g.__tpStore;
+  return upgrade(g.__tpStore);
+}
+
+/**
+ * A dev server keeps the dataset across hot reloads, so a store built by an
+ * older seed can lack fields added since. Backfill them in place.
+ */
+function upgrade(d: Dataset): Dataset {
+  if (!d.availabilityExceptions) d.availabilityExceptions = buildSeed().availabilityExceptions;
+  for (const i of d.institutes) {
+    if (!Array.isArray(i.gallery)) {
+      i.gallery = [];
+      delete (i as { galleryCount?: number }).galleryCount;
+    }
+  }
+  return d;
 }
 
 export const DATA_SOURCE: "demo" | "firestore" = "demo";

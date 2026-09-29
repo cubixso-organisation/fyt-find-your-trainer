@@ -4,7 +4,15 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { assertPermission, ForbiddenError } from "@/lib/auth";
 import { audit, db, newId } from "@/lib/data/store";
+import type { ImageRef } from "@/lib/data/types";
+import { imageStorage } from "@/lib/storage";
 import type { ActionResult } from "./bookings/actions";
+
+/** Delete a record's stored images after the record itself is gone. */
+async function dropImages(images: Array<ImageRef | undefined>) {
+  const store = imageStorage();
+  for (const img of images) if (img) await store.deleteImage(img.key).catch((e) => console.error("image cleanup failed", img.key, e));
+}
 
 function fail(e: unknown): ActionResult {
   if (e instanceof ForbiddenError) return { ok: false, error: e.message };
@@ -47,7 +55,7 @@ export async function saveInstitute(input: z.input<typeof instituteSchema>): Pro
       Object.assign(cur, { ...v, updatedAt: now });
       audit(admin, "institute.update", cur.name);
     } else {
-      d.institutes.unshift({ ...v, id: newId("ins"), galleryCount: 0, createdAt: now, updatedAt: now });
+      d.institutes.unshift({ ...v, id: newId("ins"), gallery: [], createdAt: now, updatedAt: now });
       audit(admin, "institute.create", v.name);
     }
     revalidatePath("/institutes");
@@ -66,7 +74,8 @@ export async function deleteInstitute(id: string): Promise<ActionResult> {
     const linked = d.courses.filter((c) => c.instituteId === id).length;
     if (linked) return { ok: false, error: `${linked} course${linked === 1 ? " is" : "s are"} linked to this institute. Move or delete them first, or hide the institute instead.` };
     d.institutes = d.institutes.filter((x) => x.id !== id);
-    audit(admin, "institute.delete", cur.name, { severity: "notice" });
+    await dropImages(cur.gallery);
+    audit(admin, "institute.delete", cur.name, { severity: "notice", detail: cur.gallery.length ? `${cur.gallery.length} gallery photo${cur.gallery.length === 1 ? "" : "s"} deleted` : undefined });
     revalidatePath("/institutes");
     return { ok: true, message: `${cur.name} deleted.` };
   } catch (e) {
@@ -123,7 +132,10 @@ export async function deleteCourse(id: string): Promise<ActionResult> {
     const upcoming = d.bookings.filter((b) => b.targetId === id && b.start > Date.now() && ["requested", "confirmed"].includes(b.status)).length;
     if (upcoming) return { ok: false, error: `${upcoming} upcoming booking${upcoming === 1 ? "" : "s"} still point here. Hide the listing instead, or cancel them first.` };
     d.courses = d.courses.filter((x) => x.id !== id);
-    audit(admin, "course.delete", cur.title, { severity: "notice" });
+    d.availability = d.availability.filter((a) => a.targetId !== id);
+    d.availabilityExceptions = d.availabilityExceptions.filter((a) => a.targetId !== id);
+    await dropImages([cur.cover]);
+    audit(admin, "course.delete", cur.title, { severity: "notice", detail: cur.cover ? "Cover image deleted" : undefined });
     revalidatePath("/courses");
     return { ok: true, message: `${cur.title} deleted.` };
   } catch (e) {
@@ -202,7 +214,9 @@ export async function deleteProvider(id: string): Promise<ActionResult> {
     if (upcoming) return { ok: false, error: `${cur.name} has ${upcoming} upcoming booking${upcoming === 1 ? "" : "s"}. Hide the profile instead, or cancel them first.` };
     d.providers = d.providers.filter((x) => x.id !== id);
     d.availability = d.availability.filter((a) => a.targetId !== id);
-    audit(admin, "provider.delete", cur.name, { severity: "notice" });
+    d.availabilityExceptions = d.availabilityExceptions.filter((a) => a.targetId !== id);
+    await dropImages([cur.photo]);
+    audit(admin, "provider.delete", cur.name, { severity: "notice", detail: cur.photo ? "Photo deleted" : undefined });
     revalidatePath("/providers");
     return { ok: true, message: `${cur.name} deleted.` };
   } catch (e) {

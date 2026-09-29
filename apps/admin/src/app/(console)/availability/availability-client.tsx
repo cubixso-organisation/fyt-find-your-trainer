@@ -2,12 +2,15 @@
 
 import * as React from "react";
 import { Copy, Plus, Search, Trash2 } from "lucide-react";
-import type { AvailabilityRule } from "@/lib/data/types";
+import type { AvailabilityException, AvailabilityRule } from "@/lib/data/types";
+import type { SlotBooking } from "@/lib/slots";
 import { Button, EmptyState, Input, Panel, PanelHeader, Select } from "@/components/ui/primitives";
 import { useServerAction } from "@/components/ui/use-action";
 import { cn, minutesToLabel } from "@/lib/utils";
 import { saveAvailability } from "./actions";
 import { solarIcon } from "@/components/icons/solar";
+import { ExceptionsPanel } from "./exceptions-panel";
+import { SlotPreview } from "./slot-preview";
 
 type Target = { id: string; type: "course" | "trainer" | "mentor" | "consultant"; name: string; published: boolean };
 type Draft = Omit<AvailabilityRule, "id" | "targetId" | "targetType">;
@@ -24,7 +27,25 @@ function fromTime(v: string) {
   return h * 60 + (m || 0);
 }
 
-export function AvailabilityClient({ targets, rules, initialTarget }: { targets: Target[]; rules: AvailabilityRule[]; initialTarget?: string }) {
+export function AvailabilityClient({
+  targets,
+  rules,
+  exceptions,
+  bookings,
+  leadHours,
+  now,
+  today,
+  initialTarget,
+}: {
+  targets: Target[];
+  rules: AvailabilityRule[];
+  exceptions: AvailabilityException[];
+  bookings: Array<SlotBooking & { targetId: string }>;
+  leadHours: number;
+  now: number;
+  today: string;
+  initialTarget?: string;
+}) {
   const [targetId, setTargetId] = React.useState(initialTarget);
   const [q, setQ] = React.useState("");
   const target = targets.find((t) => t.id === targetId);
@@ -42,6 +63,8 @@ export function AvailabilityClient({ targets, rules, initialTarget }: { targets:
     setDraft(original);
   }
   const { pending, run } = useServerAction();
+  const targetExceptions = React.useMemo(() => exceptions.filter((x) => x.targetId === targetId), [exceptions, targetId]);
+  const targetBookings = React.useMemo(() => bookings.filter((b) => b.targetId === targetId), [bookings, targetId]);
   const dirty = JSON.stringify(draft) !== JSON.stringify(original);
 
   const slotsPerWeek = draft.reduce((n, r) => n + Math.max(0, Math.floor((r.endMinute - r.startMinute) / r.slotMinutes)) * r.capacity, 0);
@@ -109,6 +132,7 @@ export function AvailabilityClient({ targets, rules, initialTarget }: { targets:
           <EmptyState icon={solarIcon("clock-circle-bold-duotone")} title="Pick a listing" body="Choose a trainer, mentor, consultant or course to edit its weekly windows." />
         </Panel>
       ) : (
+        <div className="flex min-w-0 flex-col gap-6">
         <Panel>
           <PanelHeader
             title={target.name}
@@ -185,6 +209,18 @@ export function AvailabilityClient({ targets, rules, initialTarget }: { targets:
             })}
           </ul>
         </Panel>
+        <ExceptionsPanel key={target.id} target={target} exceptions={targetExceptions} today={today} />
+        <SlotPreview
+          rules={draft}
+          exceptions={targetExceptions}
+          bookings={targetBookings}
+          leadHours={leadHours}
+          now={now}
+          today={today}
+          isCourse={target.type === "course"}
+          unsaved={dirty}
+        />
+        </div>
       )}
     </div>
   );

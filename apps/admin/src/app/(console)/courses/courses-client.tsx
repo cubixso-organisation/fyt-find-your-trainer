@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Eye, EyeOff, Plus, Star, Trash2 } from "lucide-react";
+import { Eye, EyeOff, ImageOff, Plus, Star, Trash2 } from "lucide-react";
 import type { Course } from "@/lib/data/types";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { Button, Checkbox, Field, Input, Select, Textarea } from "@/components/ui/primitives";
@@ -12,10 +12,11 @@ import { useServerAction } from "@/components/ui/use-action";
 import { relTime } from "@/lib/utils";
 import { deleteCourse, saveCourse, setCoursesPublished } from "../catalog-actions";
 import { solarIcon } from "@/components/icons/solar";
+import { SingleImageField, Thumb } from "@/components/media/image-upload";
 
 type Row = Course & { demand30: number; instituteName?: string };
 
-const blank = (): Omit<Course, "id" | "createdAt" | "updatedAt"> & { id?: string } => ({
+const blank = (): Omit<Course, "id" | "createdAt" | "updatedAt" | "cover"> & { id?: string } => ({
   kind: "course",
   title: "",
   instituteId: undefined,
@@ -53,12 +54,21 @@ export function CoursesClient({
       header: "Listing",
       sortValue: (r) => r.title,
       cell: (r) => (
-        <div className="min-w-0 max-w-[360px]">
-          <p className="flex items-center gap-1.5 truncate font-medium">
-            {r.featured ? <Star className="size-3.5 shrink-0 fill-accent text-accent" strokeWidth={1.5} aria-label="Featured" /> : null}
-            <span className="truncate">{r.title}</span>
-          </p>
-          <p className="truncate text-[12px] text-ink-3">{r.kind === "project" ? "Project" : r.instituteName ?? "No institute"}</p>
+        <div className="flex min-w-0 max-w-[420px] items-center gap-3">
+          {r.cover ? (
+            <Thumb image={r.cover} alt="" className="h-9 w-14 shrink-0 rounded-[5px] border border-line" />
+          ) : (
+            <span className="grid h-9 w-14 shrink-0 place-items-center rounded-[5px] border border-dashed border-line-strong text-ink-3" title="No cover image">
+              <ImageOff className="size-3.5" strokeWidth={1.6} aria-label="No cover image" />
+            </span>
+          )}
+          <div className="min-w-0">
+            <p className="flex items-center gap-1.5 truncate font-medium">
+              {r.featured ? <Star className="size-3.5 shrink-0 fill-accent text-accent" strokeWidth={1.5} aria-label="Featured" /> : null}
+              <span className="truncate">{r.title}</span>
+            </p>
+            <p className="truncate text-[12px] text-ink-3">{r.kind === "project" ? "Project" : r.instituteName ?? "No institute"}</p>
+          </div>
         </div>
       ),
     },
@@ -90,6 +100,7 @@ export function CoursesClient({
   ];
 
   const e = editing;
+  const live = e?.id ? rows.find((r) => r.id === e.id) : undefined;
   const set = <K extends keyof NonNullable<typeof e>>(k: K, v: NonNullable<typeof e>[K]) => setEditing((cur) => (cur ? { ...cur, [k]: v } : cur));
 
   return (
@@ -165,6 +176,17 @@ export function CoursesClient({
           <form className="flex flex-col gap-5" onSubmit={(ev) => ev.preventDefault()}>
             <Field label="Type" htmlFor="kind">
               <Segmented label="Listing type" value={e.kind} onChange={(v) => set("kind", v)} options={[{ value: "course", label: "Course" }, { value: "project", label: "Project" }]} />
+            </Field>
+            <Field label="Cover image" htmlFor="cover" optional hint={e.id ? "Wide images (16:9) crop best on the listing card." : undefined}>
+              <SingleImageField
+                id="cover"
+                slot="course-cover"
+                ownerId={e.id}
+                image={live?.cover}
+                alt={`${e.title || "Listing"} cover`}
+                label="Upload a cover image"
+                emptyHint="Add the listing first, then upload a cover image."
+              />
             </Field>
             <Field label="Title" htmlFor="title" hint="Learners search by this. Lead with the skill, not the institute.">
               <Input id="title" value={e.title} onChange={(ev) => set("title", ev.target.value)} placeholder="Full Stack Java with Spring Boot" />

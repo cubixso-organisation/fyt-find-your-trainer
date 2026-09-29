@@ -55,7 +55,8 @@ export interface Institute {
   email: string;
   categories: string[];
   specializations: string[];
-  galleryCount: number;
+  /** Ordered photo gallery; the first image is the cover in the app. */
+  gallery: ImageRef[];
   published: boolean;
   featured: boolean;
   createdAt: number;
@@ -75,6 +76,8 @@ export interface Course {
   durationWeeks: number;
   modes: Mode[];
   description: string;
+  /** Cover image shown on the listing card. */
+  cover?: ImageRef;
   published: boolean;
   featured: boolean;
   createdAt: number;
@@ -94,6 +97,8 @@ export interface Provider {
   yearsExperience: number;
   /** Admin-entered display rating (user reviews are Phase 2). */
   rating?: number;
+  /** Profile photo (or logo for an organisation). */
+  photo?: ImageRef;
   published: boolean;
   featured: boolean;
   createdAt: number;
@@ -131,6 +136,45 @@ export interface AvailabilityRule {
   slotMinutes: number;
   mode: Mode;
   capacity: number;
+}
+
+/**
+ * A one-date change to a listing's weekly rules. Firestore:
+ * availability/{targetId}/exceptions/{id}.
+ *  - kind "blocked", no times: the whole date is off (holiday, leave).
+ *  - kind "blocked", with times: that part of the date is off.
+ *  - kind "extra": a one-off window on that date, cut into slots like a rule.
+ */
+export interface AvailabilityException {
+  id: ID;
+  targetType: BookingTarget;
+  targetId: ID;
+  date: string; // YYYY-MM-DD, Asia/Kolkata
+  kind: "blocked" | "extra";
+  startMinute?: number;
+  endMinute?: number;
+  slotMinutes?: number;
+  mode?: Mode;
+  capacity?: number;
+  reason?: string;
+  createdBy: ID;
+  createdAt: number;
+}
+
+/**
+ * A stored image. `key` is the storage path (Firebase Storage object name,
+ * e.g. catalog/providers/prv_001/3f9c….jpg); `url` is how the console fetches
+ * it. Firestore keeps this object; bytes live in storage only.
+ */
+export interface ImageRef {
+  key: string;
+  url: string;
+  contentType: "image/jpeg" | "image/png" | "image/webp";
+  bytes: number;
+  width: number;
+  height: number;
+  uploadedAt: number;
+  uploadedBy: ID;
 }
 
 export interface Broadcast {

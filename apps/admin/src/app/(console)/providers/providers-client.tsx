@@ -12,9 +12,10 @@ import { Pill, PublishedPill } from "@/components/ui/status";
 import { useServerAction } from "@/components/ui/use-action";
 import { deleteProvider, saveProvider } from "../catalog-actions";
 import { solarIcon } from "@/components/icons/solar";
+import { SingleImageField, Thumb } from "@/components/media/image-upload";
 
 type Row = Provider & { upcoming: number; slotsPerWeek: number };
-type Draft = Omit<Provider, "id" | "createdAt" | "updatedAt" | "rating"> & { id?: string; rating?: number | "" };
+type Draft = Omit<Provider, "id" | "createdAt" | "updatedAt" | "rating" | "photo"> & { id?: string; rating?: number | "" };
 
 const TYPE_LABEL: Record<ProviderType, string> = { trainer: "Trainer", mentor: "Mentor", consultant: "Consultant" };
 const blank = (type: ProviderType = "trainer"): Draft => ({
@@ -35,6 +36,8 @@ export function ProvidersClient({ rows, openNew, initialType }: { rows: Row[]; o
   const [confirmDelete, setConfirmDelete] = React.useState(false);
   const { pending, run } = useServerAction();
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setE((c) => (c ? { ...c, [k]: v } : c));
+  // The drawer edits a copy; images save on their own, so read them from the live row.
+  const live = e?.id ? rows.find((r) => r.id === e.id) : undefined;
 
   const columns: Column<Row>[] = [
     {
@@ -43,7 +46,9 @@ export function ProvidersClient({ rows, openNew, initialType }: { rows: Row[]; o
       sortValue: (r) => r.name,
       cell: (r) => (
         <div className="flex min-w-0 items-center gap-3">
-          {r.isOrganisation ? (
+          {r.photo ? (
+            <Thumb image={r.photo} alt="" className={r.isOrganisation ? "size-8 shrink-0 rounded-[7px] border border-line" : "size-8 shrink-0 rounded-full border border-line"} />
+          ) : r.isOrganisation ? (
             <span className="grid size-8 shrink-0 place-items-center rounded-[7px] bg-sunken text-ink-2"><Building className="size-4" strokeWidth={1.6} /></span>
           ) : (
             <Avatar name={r.name} />
@@ -122,6 +127,18 @@ export function ProvidersClient({ rows, openNew, initialType }: { rows: Row[]; o
                 value={e.type}
                 onChange={(v) => set("type", v)}
                 options={[{ value: "trainer", label: "Trainer" }, { value: "mentor", label: "Mentor" }, { value: "consultant", label: "Consultant" }]}
+              />
+            </Field>
+            <Field label={e.isOrganisation ? "Logo" : "Photo"} htmlFor="photo" optional hint={e.id ? "Square works best. Shown on the profile and in search results." : undefined}>
+              <SingleImageField
+                id="photo"
+                slot="provider-photo"
+                ownerId={e.id}
+                image={live?.photo}
+                alt={`${e.name || "Profile"} ${e.isOrganisation ? "logo" : "photo"}`}
+                shape="square"
+                label={e.isOrganisation ? "Upload a logo" : "Upload a photo"}
+                emptyHint="Add the profile first, then upload a photo."
               />
             </Field>
             <Field label={e.isOrganisation ? "Organisation name" : "Full name"} htmlFor="name">

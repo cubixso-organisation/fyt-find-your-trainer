@@ -8,6 +8,7 @@ import { scryptSync, randomBytes } from "node:crypto";
 import type {
   Admin,
   AuditEntry,
+  AvailabilityException,
   AvailabilityRule,
   Booking,
   BookingStatus,
@@ -20,6 +21,7 @@ import type {
   Provider,
 } from "./types";
 import { DEFAULT_ADMIN_PERMISSIONS } from "../rbac";
+import { addDays, istDateKey, weekdayOf } from "../slots";
 
 export function hashPassword(pw: string): string {
   const salt = randomBytes(16).toString("hex");
@@ -60,6 +62,7 @@ export interface Dataset {
   providers: Provider[];
   bookings: Booking[];
   availability: AvailabilityRule[];
+  availabilityExceptions: AvailabilityException[];
   broadcasts: Broadcast[];
   audit: AuditEntry[];
   settings: PlatformSettings;
@@ -98,7 +101,7 @@ export function buildSeed(now = Date.now()): Dataset {
       email: `admissions@${name.toLowerCase().replace(/[^a-z]/g, "").slice(0, 14)}.in`,
       categories: some(CATEGORIES, 2 + Math.floor(r() * 2)),
       specializations: some(STACKS, 3),
-      galleryCount: Math.floor(r() * 9),
+      gallery: [],
       published: i !== 10,
       featured: i < 4,
       createdAt: created,
@@ -279,6 +282,32 @@ export function buildSeed(now = Date.now()): Dataset {
     }
   }
 
+  // A few date exceptions in the next fortnight, placed on weekdays where the
+  // listing actually has weekly windows so the slot preview shows their effect.
+  const today = istDateKey(now);
+  const next = (weekday: number, after = 1) => {
+    let d = addDays(today, after);
+    while (weekdayOf(d) !== weekday) d = addDays(d, 1);
+    return d;
+  };
+  const exc = (i: number, e: Omit<AvailabilityException, "id" | "createdBy" | "createdAt">): AvailabilityException => ({
+    ...e,
+    id: id("avx", i),
+    createdBy: "adm_ops",
+    createdAt: now - (i + 1) * DAY,
+  });
+  const javaCourse = courses[0];
+  const srinivas = providers[0];
+  const mentor = providers[6];
+  const availabilityExceptions: AvailabilityException[] = [
+    exc(0, { targetType: "trainer", targetId: srinivas.id, date: next(3, 2), kind: "blocked", reason: "On leave: family function" }),
+    exc(1, { targetType: "trainer", targetId: srinivas.id, date: next(1, 1), kind: "blocked", startMinute: 14 * 60, endMinute: 16 * 60 + 30, reason: "Client workshop in Gachibowli" }),
+    exc(2, { targetType: "trainer", targetId: srinivas.id, date: next(6, 1), kind: "extra", startMinute: 10 * 60, endMinute: 12 * 60 + 15, slotMinutes: 45, mode: "online", capacity: 1, reason: "Saturday catch-up slots" }),
+    exc(3, { targetType: "course", targetId: javaCourse.id, date: next(5, 3), kind: "blocked", reason: "Institute closed for the festival" }),
+    exc(4, { targetType: "course", targetId: javaCourse.id, date: next(6, 1), kind: "extra", startMinute: 11 * 60, endMinute: 13 * 60, slotMinutes: 60, mode: javaCourse.modes.includes("offline") ? "offline" : "online", capacity: 8, reason: "Weekend walk-in demo" }),
+    exc(5, { targetType: "mentor", targetId: mentor.id, date: next(0, 4), kind: "extra", startMinute: 17 * 60, endMinute: 18 * 60 + 30, slotMinutes: 45, mode: "online", capacity: 1, reason: "Sunday evening mentorship hour" }),
+  ];
+
   const broadcasts: Broadcast[] = [
     { id: "bc_001", title: "New AWS DevOps batch", body: "Free demo sessions this Saturday at Madhapur Cloud Lab. Book a slot in the app.", audience: "all", status: "sent", sentAt: now - 9 * DAY, reach: 131, createdBy: "adm_super", createdAt: now - 9 * DAY },
     { id: "bc_002", title: "Mentor hours with engineering leaders", body: "Saturday mentorship slots are open. 45 minutes, one on one.", audience: "corporate", status: "sent", sentAt: now - 4 * DAY, reach: 52, createdBy: "adm_super", createdAt: now - 4 * DAY },
@@ -322,5 +351,5 @@ export function buildSeed(now = Date.now()): Dataset {
     },
   };
 
-  return { admins, learners, institutes, courses, providers, bookings, availability, broadcasts, audit, settings };
+  return { admins, learners, institutes, courses, providers, bookings, availability, availabilityExceptions, broadcasts, audit, settings };
 }

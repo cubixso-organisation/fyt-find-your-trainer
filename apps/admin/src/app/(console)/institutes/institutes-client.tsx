@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ImageIcon, MapPin, Plus, Star, Trash2 } from "lucide-react";
+import { ImageIcon, ImageOff, MapPin, Plus, Star, Trash2 } from "lucide-react";
 import type { Institute } from "@/lib/data/types";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { Button, Field, Input, Select } from "@/components/ui/primitives";
@@ -12,9 +12,10 @@ import { useServerAction } from "@/components/ui/use-action";
 import { relTime } from "@/lib/utils";
 import { deleteInstitute, saveInstitute } from "../catalog-actions";
 import { solarIcon } from "@/components/icons/solar";
+import { GalleryField, Thumb } from "@/components/media/image-upload";
 
 type Row = Institute & { courseCount: number };
-type Draft = Omit<Institute, "id" | "createdAt" | "updatedAt" | "galleryCount"> & { id?: string; galleryCount?: number };
+type Draft = Omit<Institute, "id" | "createdAt" | "updatedAt" | "gallery"> & { id?: string };
 
 const blank = (): Draft => ({ name: "", area: "", address: "", phone: "", email: "", categories: [], specializations: [], published: false, featured: false });
 
@@ -23,6 +24,8 @@ export function InstitutesClient({ rows, areas, categories, stacks, openNew, now
   const [confirmDelete, setConfirmDelete] = React.useState(false);
   const { pending, run } = useServerAction();
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setE((c) => (c ? { ...c, [k]: v } : c));
+  // Gallery changes save on their own, so the drawer reads them from the live row.
+  const live = e?.id ? rows.find((r) => r.id === e.id) : undefined;
 
   const columns: Column<Row>[] = [
     {
@@ -30,12 +33,21 @@ export function InstitutesClient({ rows, areas, categories, stacks, openNew, now
       header: "Institute",
       sortValue: (r) => r.name,
       cell: (r) => (
-        <div className="min-w-0">
-          <p className="flex items-center gap-1.5 font-medium">
-            {r.featured ? <Star className="size-3.5 fill-accent text-accent" strokeWidth={1.5} aria-label="Featured" /> : null}
-            {r.name}
-          </p>
-          <p className="flex items-center gap-1 text-[12px] text-ink-3"><MapPin className="size-3" strokeWidth={1.75} /> {r.area}</p>
+        <div className="flex min-w-0 items-center gap-3">
+          {r.gallery[0] ? (
+            <Thumb image={r.gallery[0]} alt="" className="size-9 shrink-0 rounded-[6px] border border-line" />
+          ) : (
+            <span className="grid size-9 shrink-0 place-items-center rounded-[6px] border border-dashed border-line-strong text-ink-3">
+              <ImageOff className="size-3.5" strokeWidth={1.6} aria-hidden />
+            </span>
+          )}
+          <div className="min-w-0">
+            <p className="flex items-center gap-1.5 font-medium">
+              {r.featured ? <Star className="size-3.5 fill-accent text-accent" strokeWidth={1.5} aria-label="Featured" /> : null}
+              {r.name}
+            </p>
+            <p className="flex items-center gap-1 text-[12px] text-ink-3"><MapPin className="size-3" strokeWidth={1.75} /> {r.area}</p>
+          </div>
         </div>
       ),
     },
@@ -45,10 +57,10 @@ export function InstitutesClient({ rows, areas, categories, stacks, openNew, now
       key: "gallery",
       header: "Gallery",
       hideBelow: "lg",
-      sortValue: (r) => r.galleryCount,
+      sortValue: (r) => r.gallery.length,
       cell: (r) =>
-        r.galleryCount ? (
-          <span className="num inline-flex items-center gap-1 text-ink-2"><ImageIcon className="size-3.5" strokeWidth={1.75} /> {r.galleryCount}</span>
+        r.gallery.length ? (
+          <span className="num inline-flex items-center gap-1 text-ink-2"><ImageIcon className="size-3.5" strokeWidth={1.75} /> {r.gallery.length}</span>
         ) : (
           <span className="text-[12.5px] text-warn">No photos</span>
         ),
@@ -129,10 +141,9 @@ export function InstitutesClient({ rows, areas, categories, stacks, openNew, now
             <Field label="Specialisations" htmlFor="specs">
               <TagInput id="specs" value={e.specializations} onChange={(v) => set("specializations", v)} suggestions={stacks} />
             </Field>
-            <div className="rounded-[var(--radius-panel)] border border-dashed border-line-strong px-4 py-3 text-[13px] text-ink-2">
-              <p className="font-medium text-ink">Gallery</p>
-              <p className="mt-0.5">Photo upload goes to Firebase Storage and is enabled once the client&apos;s Firebase project is connected.{e.galleryCount ? ` ${e.galleryCount} photos on file.` : ""}</p>
-            </div>
+            <Field label="Gallery" htmlFor="gallery" hint={e.id ? "The first photo is the cover in the directory. Photos save as you add them." : undefined}>
+              <GalleryField id="gallery" instituteId={e.id} images={live?.gallery ?? []} name={e.name || "Institute"} />
+            </Field>
             <div className="flex flex-col divide-y divide-line rounded-[var(--radius-panel)] border border-line">
               <ToggleRow label="Show in app" body="Hidden institutes don't appear in the directory." checked={e.published} onChange={(v) => set("published", v)} />
               <ToggleRow label="Feature on home" body="Appears in the featured institutes row." checked={e.featured} onChange={(v) => set("featured", v)} />
