@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>FYT Brand Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --marigold: #E39B12;
+    --ink: #221D17;
+    --ink-2: #6B6358;
+    --paper: #F7F4EE;
+    --stone: #DDD5C7;
+    --canvas: #141210;
+    --blue: #2A78D6;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 1920px; height: 1200px; background: var(--canvas); font-family: Geist, system-ui, sans-serif; color: var(--ink); padding: 28px; }
+  .board { display: grid; grid-template-columns: 1.25fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; gap: 16px; height: 100%; }
+  .p { position: relative; border-radius: 14px; overflow: hidden; padding: 28px; }
+  .label { position: absolute; left: 28px; bottom: 22px; font: 500 11px/1 "Geist Mono", monospace; letter-spacing: .12em; text-transform: uppercase; opacity: .55; }
+  .num { position: absolute; right: 28px; bottom: 22px; font: 500 11px/1 "Geist Mono", monospace; opacity: .45; }
+  .paper { background: var(--paper); }
+  .ink { background: var(--ink); color: var(--paper); }
+  .mari { background: var(--marigold); color: var(--ink); }
+  .stone { background: #EFEAE1; }
+  .center { display: flex; align-items: center; justify-content: center; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="pin" viewBox="0 0 100 120"><path d="M50 114 C 38 100 12 74 12 48 A38 38 0 0 1 88 48 C 88 74 62 100 50 114 Z"/></symbol>
+    <symbol id="y" viewBox="0 0 100 120"><path d="M32.5 29.5 L50 50 L67.5 29.5 M50 50 V79" stroke-width="10.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+    <symbol id="word" viewBox="-2 -2 146 72"><path d="M6 6 V62 M6 6 H38 M6 33 H32 M52 6 L69 31 L86 6 M69 31 V62 M98 6 H136 M117 6 V62" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+  </defs>
+</svg>
+
+<div class="board">
+
+  <!-- 01 Logo cover -->
+  <section class="p paper center" style="flex-direction:column;gap:26px">
+    <div style="display:flex;align-items:center;gap:28px">
+      <img src="logo/fyt-mark.svg" width="132" height="158" alt="" style="filter:drop-shadow(0 10px 14px rgba(154,85,0,.28))"/>
+      <img src="logo/fyt-wordmark.svg" width="300" height="148" alt="FYT"/>
+    </div>
+    <p style="font:400 22px/1 Outfit;letter-spacing:.34em;text-transform:uppercase;color:var(--ink-2)">Find your trainer</p>
+    <span class="label">Primary lockup</span><span class="num">01</span>
+  </section>
+
+  <!-- 02 Construction -->
+  <section class="p ink center">
+    <svg width="330" height="300" viewBox="-20 -8 140 136" style="overflow:visible">
+      <g stroke="rgba(247,244,238,.18)" stroke-width=".4" fill="none">
+        <circle cx="50" cy="48" r="38"/>
+        <line x1="-20" y1="48" x2="120" y2="48"/><line x1="50" y1="-8" x2="50" y2="128"/>
+        <line x1="12" y1="48" x2="50" y2="114"/><line x1="88" y1="48" x2="50" y2="114"/>
+        <line x1="18" y1="10" x2="82" y2="86" stroke-dasharray="1.5 1.5"/><line x1="82" y1="10" x2="18" y2="86" stroke-dasharray="1.5 1.5"/>
+      </g>
+      <use href="#pin" width="100" height="120" fill="none" stroke="var(--marigold)" stroke-width="1.1"/>
+      <use href="#y" width="100" height="120" stroke="rgba(247,244,238,.9)"/>
+      <circle cx="50" cy="50" r="2.6" fill="var(--marigold)"/>
+      <g font-family="Geist Mono" font-size="4.2" fill="rgba(247,244,238,.6)">
+        <text x="93" y="30">PIN / FIND</text>
+        <text x="93" y="52">MEETING POINT</text>
+        <text x="-19" y="26">YOU</text>
+        <text x="-19" y="33">TRAINER</text>
+        <text x="-19" y="84">ONE PATH</text>
+      </g>
+    </svg>
+    <span class="label">Construction · the Y is two paths becoming one</span><span class="num">02</span>
+  </section>
+
+  <!-- 03 Digital application -->
+  <section class="p stone" style="padding:0">
+    <div style="position:absolute;inset:26px 26px 0 26px;background:var(--paper);border-radius:28px 28px 0 0;border:1px solid #d9d1c2;border-bottom:0;padding:22px 22px 0">
+      <div style="display:flex;justify-content:space-between;font:600 12px Geist;color:var(--ink)"><span>9:41</span><span style="font-family:'Geist Mono';opacity:.5">Ameerpet</span></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:18px">
+        <svg width="26" height="31"><use href="#pin" fill="var(--marigold)"/><use href="#y" stroke="var(--paper)"/></svg>
+        <p style="font:600 20px Outfit">Good evening, Harika</p>
+      </div>
+      <div style="margin-top:16px;height:46px;border-radius:12px;background:#fff;border:1px solid #e3dccf;display:flex;align-items:center;gap:10px;padding:0 14px;font:400 14px Geist;color:var(--ink-2)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        Java trainer near Ameerpet
+      </div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <span style="font:500 12px Geist;background:var(--ink);color:var(--paper);padding:7px 12px;border-radius:99px">Full Stack</span>
+        <span style="font:500 12px Geist;border:1px solid #d9d1c2;padding:7px 12px;border-radius:99px">Data &amp; AI</span>
+        <span style="font:500 12px Geist;border:1px solid #d9d1c2;padding:7px 12px;border-radius:99px">DevOps</span>
+      </div>
+      <div style="margin-top:16px;border-radius:14px;background:#fff;border:1px solid #e3dccf;padding:14px;display:flex;gap:12px;align-items:center">
+        <div style="width:44px;height:44px;border-radius:12px;background:#f3e3c2"></div>
+        <div style="flex:1"><p style="font:600 14px Geist">Srinivas K.</p><p style="font:400 12px Geist;color:var(--ink-2)">Java architect · 14 yrs</p></div>
+        <span style="font:600 12px Geist;background:var(--marigold);padding:8px 12px;border-radius:10px">Book demo</span>
+      </div>
+    </div>
+    <span class="label" style="z-index:2">App · home</span><span class="num" style="z-index:2">03</span>
+  </section>
+
+  <!-- 04 Tagline -->
+  <section class="p mari" style="display:flex;flex-direction:column;justify-content:center">
+    <p style="font:700 84px/0.95 Outfit;letter-spacing:-.03em">Find your<br/>fit.</p>
+    <p style="margin-top:18px;font:400 18px/1.4 Geist;max-width:30ch;opacity:.8">The right trainer, mentor or institute in Hyderabad. Book a demo in two taps.</p>
+    <span class="label">Brand line</span><span class="num">04</span>
+  </section>
+
+  <!-- 05 Colour -->
+  <section class="p paper" style="display:grid;grid-template-columns:1.6fr 1fr 1fr;grid-template-rows:1fr auto;gap:10px;padding-bottom:56px">
+    <div style="background:var(--marigold);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:flex-end;font:500 12px 'Geist Mono'"><b style="font:600 15px Outfit">Marigold</b>#E39B12</div>
+    <div style="background:var(--ink);color:var(--paper);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:flex-end;font:500 12px 'Geist Mono'"><b style="font:600 15px Outfit">Ink</b>#221D17</div>
+    <div style="display:grid;grid-template-rows:1fr 1fr;gap:10px">
+      <div style="background:var(--stone);border-radius:10px;padding:10px;font:500 11px 'Geist Mono';display:flex;align-items:flex-end">Stone #DDD5C7</div>
+      <div style="background:var(--blue);color:#fff;border-radius:10px;padding:10px;font:500 11px 'Geist Mono';display:flex;align-items:flex-end">Signal #2A78D6</div>
+    </div>
+    <div style="grid-column:1/-1;height:26px;border-radius:8px;border:1px solid #e3dccf;background:#fff;display:flex;align-items:center;padding:0 12px;font:500 11px 'Geist Mono';color:var(--ink-2)">Paper #F7F4EE · marigold stays under 10% of any screen</div>
+    <span class="label">Colour</span><span class="num">05</span>
+  </section>
+
+  <!-- 06 Typography -->
+  <section class="p ink" style="display:flex;flex-direction:column;justify-content:center;gap:10px">
+    <p style="font:600 108px/1 Outfit;letter-spacing:-.03em">Aa</p>
+    <p style="font:400 22px Outfit;letter-spacing:.02em;opacity:.85">Outfit · headlines &amp; brand</p>
+    <p style="font:400 17px Geist;opacity:.65">Geist · interface and body text</p>
+    <p style="font:400 15px 'Geist Mono';color:var(--marigold)">Geist Mono · BK-4F2K · 10:30 am</p>
+    <span class="label">Type</span><span class="num">06</span>
+  </section>
+
+  <!-- 07 Physical: verified trainer badge + demo pass -->
+  <section class="p stone center" style="gap:22px">
+    <div style="width:200px;height:290px;background:var(--ink);border-radius:16px;padding:22px;color:var(--paper);display:flex;flex-direction:column;box-shadow:0 18px 40px -18px rgba(20,18,16,.5);transform:rotate(-4deg)">
+      <div style="width:44px;height:8px;border-radius:4px;background:#3a332b;align-self:center;margin-bottom:26px"></div>
+      <svg width="48" height="58"><use href="#pin" fill="var(--marigold)"/><use href="#y" stroke="var(--ink)"/></svg>
+      <p style="margin-top:auto;font:600 20px Outfit">Nalini Pillai</p>
+      <p style="font:400 12px Geist;opacity:.7">QA Automation</p>
+      <p style="margin-top:12px;font:500 10px 'Geist Mono';letter-spacing:.12em;color:var(--marigold)">VERIFIED TRAINER</p>
+    </div>
+    <div style="width:210px;background:var(--paper);border-radius:14px;padding:18px;box-shadow:0 18px 40px -20px rgba(20,18,16,.45);transform:rotate(3deg)">
+      <p style="font:500 10px 'Geist Mono';letter-spacing:.12em;color:var(--ink-2)">DEMO PASS</p>
+      <p style="margin-top:8px;font:600 18px/1.15 Outfit">AWS DevOps<br/>Engineer Track</p>
+      <p style="margin-top:10px;font:400 12px Geist;color:var(--ink-2)">Sat 4 Oct · 10:30 am</p>
+      <div style="margin-top:14px;border-top:1px dashed #cfc6b6;padding-top:12px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font:500 13px 'Geist Mono'">BK-4F2K</span>
+        <svg width="18" height="22"><use href="#pin" fill="var(--marigold)"/><use href="#y" stroke="var(--paper)"/></svg>
+      </div>
+    </div>
+    <span class="label">Print · badge &amp; pass</span><span class="num">07</span>
+  </section>
+
+  <!-- 08 Image direction: the city map, one pin found -->
+  <section class="p ink" style="padding:0">
+    <svg width="100%" height="100%" viewBox="0 0 520 360" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="1.2" cy="1.2" r=".9" fill="rgba(247,244,238,.10)"/></pattern>
+      </defs>
+      <rect width="520" height="360" fill="url(#dots)"/>
+      <g stroke="rgba(247,244,238,.16)" fill="none" stroke-width="1.4">
+        <path d="M-10 250 C 90 220 150 260 250 210 S 420 150 540 170"/>
+        <path d="M60 -10 C 90 90 70 170 130 250 S 170 340 150 380"/>
+        <path d="M-10 90 C 120 110 220 70 330 110 S 470 140 540 100"/>
+        <path d="M300 -10 C 290 80 330 150 310 230 S 330 330 350 380"/>
+        <path d="M420 -10 C 400 60 440 120 430 200"/>
+      </g>
+      <g fill="rgba(247,244,238,.28)">
+        <g transform="translate(96 150) scale(.14)"><use href="#pin" width="100" height="120"/></g>
+        <g transform="translate(200 60) scale(.14)"><use href="#pin" width="100" height="120"/></g>
+        <g transform="translate(380 190) scale(.14)"><use href="#pin" width="100" height="120"/></g>
+        <g transform="translate(150 270) scale(.14)"><use href="#pin" width="100" height="120"/></g>
+        <g transform="translate(440 70) scale(.14)"><use href="#pin" width="100" height="120"/></g>
+        <g transform="translate(40 40) scale(.14)"><use href="#pin" width="100" height="120"/></g>
+      </g>
+      <circle cx="300" cy="150" r="58" fill="none" stroke="rgba(227,155,18,.25)"/>
+      <circle cx="300" cy="150" r="34" fill="none" stroke="rgba(227,155,18,.45)"/>
+      <g transform="translate(276 104) scale(.48)"><use href="#pin" width="100" height="120" fill="var(--marigold)"/><use href="#y" width="100" height="120" stroke="var(--ink)"/></g>
+      <text x="340" y="112" font-family="Geist Mono" font-size="10" fill="rgba(247,244,238,.8)">1 match · 0.8 km</text>
+    </svg>
+    <span class="label" style="color:var(--paper)">Image · many options, one right fit</span><span class="num" style="color:var(--paper)">08</span>
+  </section>
+
+  <!-- 09 System detail -->
+  <section class="p paper" style="display:flex;flex-direction:column;justify-content:center;gap:16px">
+    <div style="display:flex;gap:10px;align-items:center">
+      <span style="display:inline-flex;align-items:center;gap:8px;font:600 14px Geist;background:var(--ink);color:var(--paper);padding:12px 18px;border-radius:12px">
+        <svg width="14" height="17"><use href="#pin" fill="var(--marigold)"/></svg> Book a free demo
+      </span>
+      <span style="font:500 14px Geist;border:1px solid #d9d1c2;padding:11px 16px;border-radius:12px">View profile</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <span style="display:inline-flex;align-items:center;gap:6px;font:500 12px Geist;background:#e2f1e6;color:#1f7a45;padding:6px 10px;border-radius:7px">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg> Demo confirmed</span>
+      <span style="font:500 12px Geist;background:#fbeed2;color:#8a5a00;padding:6px 10px;border-radius:7px">Meet link sent</span>
+      <span style="font:500 12px 'Geist Mono';background:#ece6db;color:var(--ink-2);padding:6px 10px;border-radius:7px">4.8 · 14 yrs</span>
+    </div>
+    <div style="display:flex;gap:14px;align-items:flex-end;margin-top:4px">
+      <img src="logo/fyt-app-icon.svg" width="64" height="64" alt="FYT app icon"/>
+      <svg width="44" height="44" viewBox="0 0 1024 1024"><rect width="1024" height="1024" rx="228" fill="var(--marigold)"/><g transform="translate(262 212) scale(5)"><use href="#pin" width="100" height="120" fill="var(--ink)"/><use href="#y" width="100" height="120" stroke="var(--marigold)"/></g></svg>
+      <svg width="24" height="29"><use href="#pin" fill="var(--marigold)"/><use href="#y" stroke="var(--paper)"/></svg>
+      <svg width="14" height="17"><use href="#pin" fill="var(--ink)"/><use href="#y" stroke="var(--paper)"/></svg>
+      <span style="font:500 11px 'Geist Mono';color:var(--ink-2);margin-left:6px">64 · 44 · 24 · 14 px</span>
+    </div>
+    <span class="label">System · components &amp; scale</span><span class="num">09</span>
+  </section>
+
+</div>
+</body>
+</html>
