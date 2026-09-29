@@ -66,12 +66,12 @@ export function ContentClient({
 
       <div
         className={cn(
-          "fixed bottom-5 left-1/2 z-30 flex -translate-x-1/2 items-center gap-3 rounded-[var(--radius-overlay)] border border-line bg-raised px-4 py-2.5 shadow-[var(--shadow-overlay)] transition-[opacity,transform] duration-200",
+          "fixed bottom-5 left-1/2 z-30 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center gap-3 rounded-[var(--radius-overlay)] border border-line bg-raised px-4 py-2.5 shadow-[var(--shadow-overlay)] transition-[opacity,transform] duration-200",
           dirty ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0",
         )}
         aria-hidden={!dirty}
       >
-        <span className="text-[13px] text-ink-2">Unsaved changes</span>
+        <span className="whitespace-nowrap text-[13px] text-ink-2">Unsaved changes</span>
         <Button variant="ghost" size="sm" onClick={() => { setCategories(c0); setTechStacks(t0); setFeatured(f0); }}>Discard</Button>
         <Button variant="primary" size="sm" loading={pending === "save"} onClick={() => run("save", () => saveTaxonomy({ categories, techStacks, featured }))}>
           Publish to app
@@ -94,8 +94,8 @@ function FeaturedPicker({ title, items, value, onChange }: { title: string; item
             <li key={i.id}>
               <label className={cn("flex items-center gap-3 px-5 py-2", full ? "opacity-50" : "cursor-pointer hover:bg-sunken/50")}>
                 <Checkbox checked={on} disabled={full} onChange={() => onChange(on ? value.filter((x) => x !== i.id) : [...value, i.id])} />
-                <span className="min-w-0 flex-1 truncate text-[13.5px] text-ink">{i.label}</span>
-                <span className="text-[12px] capitalize text-ink-3">{i.sub}</span>
+                <span className="min-w-0 flex-1 truncate text-[13.5px] text-ink" title={i.label}>{i.label}</span>
+                <span className="shrink-0 whitespace-nowrap text-[12px] capitalize text-ink-3">{i.sub}</span>
                 {on ? <Star className="size-3.5 fill-accent text-accent" strokeWidth={1.5} aria-hidden /> : null}
               </label>
             </li>

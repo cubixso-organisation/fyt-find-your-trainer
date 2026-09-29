@@ -19,19 +19,21 @@ export function KpiBand({ items }: { items: Kpi[] }) {
         <div
           key={k.label}
           className={cn(
-            "flex flex-col gap-1 px-5 py-4",
+            "flex min-w-0 flex-col gap-1 px-4 py-4 sm:px-5",
             i % 2 === 1 && "border-l border-line",
             i >= 2 && "border-t border-line lg:border-t-0",
             i === 2 && "lg:border-l",
           )}
         >
           <p className="text-[12.5px] text-ink-2">{k.label}</p>
-          <p className="num text-[26px] font-semibold leading-tight tracking-tight text-ink">{k.value}</p>
-          <div className="flex min-h-5 items-center gap-1.5 text-[12px]">
+          <p className="num truncate text-[26px] font-semibold leading-tight tracking-tight text-ink" title={k.value}>{k.value}</p>
+          {/* Wraps as a unit: the delta never splits across lines, the hint
+              drops below it when the cell is narrow. */}
+          <div className="flex min-h-5 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[12px] leading-snug">
             {k.delta ? (
               <span
                 className={cn(
-                  "inline-flex items-center gap-0.5 font-medium",
+                  "inline-flex shrink-0 items-center gap-0.5 whitespace-nowrap font-medium",
                   k.delta.direction === "flat" ? "text-ink-3" : k.delta.good ? "text-ok" : "text-bad",
                 )}
               >

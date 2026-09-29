@@ -300,8 +300,10 @@ export function PanelHeader({
   className?: string;
 }) {
   return (
-    <header className={cn("flex items-start justify-between gap-4 border-b border-line px-5 py-3.5", className)}>
-      <div className="min-w-0">
+    // Wraps instead of squeezing: when the actions don't fit beside the title
+    // they drop to their own line, so the title never collapses to a sliver.
+    <header className={cn("flex flex-wrap items-start justify-between gap-x-4 gap-y-3 border-b border-line px-5 py-3.5", className)}>
+      <div className="min-w-[min(100%,14rem)] flex-1">
         <h2 className="font-display text-[15px] font-semibold tracking-tight text-ink">{title}</h2>
         {description ? <p className="mt-0.5 text-[13px] text-ink-2">{description}</p> : null}
       </div>

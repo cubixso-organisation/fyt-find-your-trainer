@@ -71,7 +71,7 @@ export function AttentionQueue({ rows, now }: { rows: QueueRow[]; now: number })
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -12 }}
                 transition={{ duration: 0.2, ease: [0.25, 1, 0.5, 1] }}
-                className="grid grid-cols-1 gap-3 px-5 py-3.5 sm:grid-cols-[1fr_auto] sm:items-center"
+                className="grid grid-cols-1 gap-3 px-5 py-3.5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
               >
                 <div className="flex min-w-0 items-start gap-3">
                   <span
@@ -88,7 +88,7 @@ export function AttentionQueue({ rows, now }: { rows: QueueRow[]; now: number })
                     )}
                   </span>
                   <div className="min-w-0">
-                    <p className="truncate text-[13.5px] text-ink">
+                    <p className="line-clamp-2 text-[13.5px] text-ink" title={`${r.learnerName} with ${r.targetName}`}>
                       <span className="font-medium">{r.learnerName}</span>
                       <span className="text-ink-3"> with </span>
                       <span className="font-medium">{r.targetName}</span>

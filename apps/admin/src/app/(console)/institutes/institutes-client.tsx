@@ -52,7 +52,7 @@ export function InstitutesClient({ rows, areas, categories, stacks, openNew, now
       ),
     },
     { key: "cats", header: "Categories", hideBelow: "md", cell: (r) => <span className="text-ink-2">{r.categories.join(", ")}</span> },
-    { key: "courses", header: "Courses", sortValue: (r) => r.courseCount, cell: (r) => <span className="num">{r.courseCount}</span>, className: "text-right", headerClassName: "text-right" },
+    { key: "courses", header: "Courses", hideBelow: "sm", sortValue: (r) => r.courseCount, cell: (r) => <span className="num">{r.courseCount}</span>, className: "text-right", headerClassName: "text-right" },
     {
       key: "gallery",
       header: "Gallery",

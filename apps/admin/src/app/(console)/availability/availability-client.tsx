@@ -86,15 +86,15 @@ export function AvailabilityClient({
     });
 
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
-      <Panel className="h-fit lg:sticky lg:top-20">
+    <div className="grid grid-cols-1 gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
+      <Panel className="h-fit xl:sticky xl:top-20">
         <div className="border-b border-line p-3">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3" strokeWidth={1.5} aria-hidden />
             <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Find a trainer or course" className="pl-9" aria-label="Find a trainer or course" />
           </div>
         </div>
-        <ul className="max-h-[60vh] overflow-y-auto p-1.5" role="listbox" aria-label="Listings">
+        <ul className="max-h-[40vh] overflow-y-auto p-1.5 xl:max-h-[60vh]" role="listbox" aria-label="Listings">
           {shown.map((t) => (
             <li key={t.id}>
               <button

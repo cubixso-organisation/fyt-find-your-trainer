@@ -119,12 +119,12 @@ export function SettingsClient({ initial, maintenance, isOwner }: { initial: S; 
 
       <div
         className={cn(
-          "fixed bottom-5 left-1/2 z-30 flex -translate-x-1/2 items-center gap-3 rounded-[var(--radius-overlay)] border border-line bg-raised px-4 py-2.5 shadow-[var(--shadow-overlay)] transition-[opacity,transform] duration-200",
+          "fixed bottom-5 left-1/2 z-30 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center gap-3 rounded-[var(--radius-overlay)] border border-line bg-raised px-4 py-2.5 shadow-[var(--shadow-overlay)] transition-[opacity,transform] duration-200",
           dirty ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0",
         )}
         aria-hidden={!dirty}
       >
-        <span className="text-[13px] text-ink-2">Unsaved changes</span>
+        <span className="whitespace-nowrap text-[13px] text-ink-2">Unsaved changes</span>
         <Button variant="ghost" size="sm" onClick={() => setS(initial)}>Discard</Button>
         <Button variant="primary" size="sm" loading={pending === "save"} onClick={() => run("save", () => saveSettings(s))}>Save settings</Button>
       </div>

@@ -185,7 +185,7 @@ export function BarList({
       {items.map((i, idx) => (
         <li key={i.label} className="group">
           <div className="mb-1 flex items-baseline justify-between gap-3 text-[13px]">
-            <span className="min-w-0 truncate text-ink">
+            <span className="min-w-0 truncate text-ink" title={i.sub ? `${i.label} · ${i.sub}` : i.label}>
               {i.label}
               {i.sub ? <span className="ml-1.5 text-[12px] text-ink-3">{i.sub}</span> : null}
             </span>

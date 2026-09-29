@@ -122,8 +122,11 @@ export function ExceptionsPanel({
                     {isCourse ? <span className="num">· {x.capacity} seats</span> : null}
                   </span>
                 ) : null}
-                <span className="min-w-0 flex-1 truncate text-[12.5px] text-ink-2">{x.reason ?? ""}</span>
-                <Button variant="ghost" size="icon" className="size-8" aria-label={`Remove exception on ${x.date}`} onClick={() => setRemoving(x)}>
+                {/* Wraps onto its own line rather than cutting the reason off. */}
+                {x.reason ? (
+                  <span className="min-w-[10rem] flex-1 text-[12.5px] leading-snug text-ink-2 [overflow-wrap:anywhere]">{x.reason}</span>
+                ) : null}
+                <Button variant="ghost" size="icon" className="ml-auto size-8 shrink-0" aria-label={`Remove exception on ${x.date}`} onClick={() => setRemoving(x)}>
                   <Trash2 className="size-4" strokeWidth={1.6} />
                 </Button>
               </li>

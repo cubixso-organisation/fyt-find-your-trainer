@@ -48,7 +48,7 @@ export function AuditClient({ entries, actors, now }: { entries: AuditEntry[]; a
       header: "Operator",
       sortValue: (r) => r.actorName,
       cell: (r) => (
-        <div>
+        <div className="min-w-[7.5rem]">
           <p className="font-medium">{r.actorName}</p>
           <p className="text-[12px] text-ink-3">{ROLE_LABEL[r.actorRole]}</p>
         </div>
@@ -60,7 +60,9 @@ export function AuditClient({ entries, actors, now }: { entries: AuditEntry[]; a
       cell: (r) => {
         const Icon = iconFor(r.action);
         return (
-          <div className="flex min-w-0 items-start gap-2">
+          // A floor on the width: on a phone the table scrolls sideways
+          // instead of crushing the sentence to one word per line.
+          <div className="flex min-w-[15rem] items-start gap-2">
             <Icon className="mt-0.5 size-4 shrink-0 text-ink-3" strokeWidth={1.6} aria-hidden />
             <div className="min-w-0">
               <p className="text-ink">

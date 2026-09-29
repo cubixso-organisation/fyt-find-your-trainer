@@ -155,7 +155,7 @@ export function ImageDropzone({
             <span className="block text-[13px] font-medium text-ink">
               {pending ? `Uploading ${pending.name}` : over ? "Drop to upload" : label}
             </span>
-            <span className="block truncate text-[12px] text-ink-3">
+            <span className="block text-[12px] leading-snug text-ink-3">
               {pending ? `${mb(pending.size)} · checking and saving…` : disabled ? hint : <>Drag a file here or <span className="text-ink-2 underline underline-offset-2">choose one</span>. {hint}</>}
             </span>
           </span>

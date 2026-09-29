@@ -78,7 +78,7 @@ export function BookingsClient({ rows, now, initialView }: { rows: BookingRow[];
     {
       key: "mode",
       header: "Mode",
-      hideBelow: "md",
+      hideBelow: "xl",
       cell: (r) => (
         <span className="inline-flex items-center gap-1.5 text-ink-2">
           {r.mode === "online" ? <Video className="size-3.5" strokeWidth={1.75} /> : <MapPin className="size-3.5" strokeWidth={1.75} />}
@@ -267,7 +267,7 @@ function BookingDrawer({ booking: b, now, onClose }: { booking: BookingRow | nul
             {b.status === "meet_failed" ? <span className="text-[13px] text-bad">The learner has no link yet.</span> : null}
           </div>
 
-          <dl className="grid grid-cols-[120px_1fr] gap-x-4 gap-y-3 text-[13.5px]">
+          <dl className="grid grid-cols-[96px_minmax(0,1fr)] gap-x-4 sm:grid-cols-[120px_minmax(0,1fr)] gap-y-3 text-[13.5px]">
             <dt className="text-ink-2">When</dt>
             <dd className="num text-ink">
               {fmtDateTime(b.start)} <span className="text-ink-3">({relTime(b.start, now)})</span>
@@ -286,14 +286,14 @@ function BookingDrawer({ booking: b, now, onClose }: { booking: BookingRow | nul
                 <dt className="text-ink-2">Meet link</dt>
                 <dd>
                   {b.meetLink ? (
-                    <span className="flex items-center gap-2">
-                      <a href={b.meetLink} target="_blank" rel="noreferrer" className="num truncate text-[13px] text-ink underline decoration-line-strong underline-offset-4">
+                    <span className="flex min-w-0 items-center gap-2">
+                      <a href={b.meetLink} target="_blank" rel="noreferrer" title={b.meetLink} className="num min-w-0 truncate text-[13px] text-ink underline decoration-line-strong underline-offset-4">
                         {b.meetLink.replace("https://", "")}
                       </a>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="size-7"
+                        className="size-7 shrink-0"
                         aria-label="Copy Meet link"
                         onClick={() => {
                           void navigator.clipboard.writeText(b.meetLink!);
@@ -326,8 +326,8 @@ function BookingDrawer({ booking: b, now, onClose }: { booking: BookingRow | nul
             <section className="rounded-[var(--radius-panel)] border border-line p-4">
               <h3 className="text-[13.5px] font-semibold text-ink">Reschedule</h3>
               <p className="mt-0.5 text-[12.5px] text-ink-2">Both the learner and the provider get the new time by push and email.</p>
-              <div className="mt-3 flex items-end gap-2">
-                <Field label="New time (IST)" htmlFor="resched" className="flex-1">
+              <div className="mt-3 flex flex-wrap items-end gap-2">
+                <Field label="New time (IST)" htmlFor="resched" className="min-w-[12rem] flex-1">
                   <Input id="resched" type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} />
                 </Field>
                 <Button

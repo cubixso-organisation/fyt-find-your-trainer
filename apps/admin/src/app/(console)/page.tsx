@@ -116,7 +116,10 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
                     const past = b.end < now;
                     const live = b.start <= now && now < b.end;
                     return (
-                      <li key={b.id} className={`grid grid-cols-[72px_1fr_auto] items-center gap-4 px-5 py-3 ${past ? "opacity-60" : ""}`}>
+                      <li
+                        key={b.id}
+                        className={`grid grid-cols-[64px_minmax(0,1fr)] items-center gap-x-4 gap-y-1.5 px-5 py-3 sm:grid-cols-[72px_minmax(0,1fr)_auto] ${past ? "opacity-60" : ""}`}
+                      >
                         <div className="num text-[13px] text-ink">
                           {fmtTime(b.start)}
                           {live ? (
@@ -126,13 +129,18 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
                           ) : null}
                         </div>
                         <div className="min-w-0">
-                          <p className="truncate text-[13.5px] font-medium text-ink">{b.targetName}</p>
-                          <p className="mt-0.5 flex items-center gap-1.5 truncate text-[12.5px] text-ink-2">
+                          <p className="truncate text-[13.5px] font-medium text-ink" title={b.targetName}>{b.targetName}</p>
+                          <p className="mt-0.5 flex min-w-0 items-center gap-1.5 text-[12.5px] text-ink-2">
                             {b.mode === "online" ? <Video className="size-3.5 shrink-0" strokeWidth={1.75} /> : <MapPin className="size-3.5 shrink-0" strokeWidth={1.75} />}
-                            {b.learnerName} · {b.learnerSegment === "corporate" ? "Corporate" : "Student"}
+                            <span className="truncate">
+                              {b.learnerName} · {b.learnerSegment === "corporate" ? "Corporate" : "Student"}
+                            </span>
                           </p>
                         </div>
-                        <BookingStatusPill status={b.status} />
+                        {/* Below sm the pill drops under the text so the names keep the width. */}
+                        <div className="col-start-2 sm:col-start-auto">
+                          <BookingStatusPill status={b.status} />
+                        </div>
                       </li>
                     );
                   })}

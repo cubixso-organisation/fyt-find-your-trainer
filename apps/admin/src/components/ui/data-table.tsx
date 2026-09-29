@@ -191,9 +191,12 @@ export function DataTable<T>({
 
   return (
     <div className="relative overflow-hidden rounded-[var(--radius-panel)] border border-line bg-surface">
-      <div className="flex flex-col gap-3 border-b border-line px-4 py-3 lg:flex-row lg:items-center">
+      {/* One wrapping row: search, filters and count each keep their natural
+          width and move to the next line as a group rather than being squeezed
+          into a column beside each other. */}
+      <div className="flex flex-wrap items-center gap-3 border-b border-line px-4 py-3">
         {search ? (
-          <div className="group/search relative w-full lg:max-w-[300px]">
+          <div className="group/search relative w-full sm:w-auto sm:min-w-[240px] sm:flex-1 sm:basis-[240px] lg:max-w-[320px]">
             <Search
               className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3 transition-colors duration-150 group-focus-within/search:text-ink-2"
               strokeWidth={1.5}
@@ -219,7 +222,9 @@ export function DataTable<T>({
           </div>
         ) : null}
         {filters.length ? (
-          <div className="flex flex-wrap items-center gap-2">
+          // Two even columns on a phone rather than a ragged stack of
+          // content-width selects; a wrapping row from sm up.
+          <div className="grid w-full min-w-0 grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:items-center">
             {filters.map((flt) => {
               const on = !!f[flt.key] && f[flt.key] !== "all";
               return (
@@ -229,7 +234,7 @@ export function DataTable<T>({
                   value={f[flt.key] ?? "all"}
                   onChange={(e) => setF((prev) => ({ ...prev, [flt.key]: e.target.value }))}
                   className={cn(
-                    "w-auto min-w-[140px]",
+                    "w-full min-w-0 truncate sm:w-auto sm:min-w-[140px] sm:max-w-[260px]",
                     on && "border-line-strong bg-sunken font-medium text-ink",
                   )}
                 >
@@ -244,7 +249,7 @@ export function DataTable<T>({
             })}
           </div>
         ) : null}
-        <div className="flex items-center gap-3 lg:ml-auto">
+        <div className="flex flex-wrap items-center gap-3 sm:ml-auto">
           <span className="num whitespace-nowrap text-[12.5px] text-ink-3" aria-live="polite">
             {activeFilters ? (
               <>

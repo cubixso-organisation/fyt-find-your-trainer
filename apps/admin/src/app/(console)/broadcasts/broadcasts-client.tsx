@@ -42,7 +42,7 @@ export function BroadcastsClient({
         <PanelHeader title="New broadcast" />
         <div className="grid grid-cols-1 gap-6 px-5 py-5 md:grid-cols-[minmax(0,1fr)_240px]">
           <form className="flex flex-col gap-4" onSubmit={(e) => e.preventDefault()}>
-            <Field label="Audience" htmlFor="aud" hint={<span className="num">Reaches {fmtNumber(reach[audience])} learners with notifications on</span>}>
+            <Field label="Audience" htmlFor="aud" hint={<>Reaches <span className="num">{fmtNumber(reach[audience])}</span> learners with notifications on</>}>
               <Segmented
                 label="Audience"
                 value={audience}
