@@ -302,7 +302,7 @@ export function PanelHeader({
   return (
     <header className={cn("flex items-start justify-between gap-4 border-b border-line px-5 py-3.5", className)}>
       <div className="min-w-0">
-        <h2 className="text-[15px] font-semibold tracking-tight text-ink">{title}</h2>
+        <h2 className="font-display text-[15px] font-semibold tracking-tight text-ink">{title}</h2>
         {description ? <p className="mt-0.5 text-[13px] text-ink-2">{description}</p> : null}
       </div>
       {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
@@ -325,7 +325,7 @@ export function PageHeader({
     <div className="flex flex-col gap-4 pb-6 md:flex-row md:items-end md:justify-between">
       <div className="min-w-0">
         {eyebrow ? <div className="mb-1.5 text-[12px] font-medium uppercase tracking-[0.08em] text-ink-3">{eyebrow}</div> : null}
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">{title}</h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight text-ink">{title}</h1>
         {description ? <p className="mt-1 max-w-[65ch] text-sm text-ink-2">{description}</p> : null}
       </div>
       {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}

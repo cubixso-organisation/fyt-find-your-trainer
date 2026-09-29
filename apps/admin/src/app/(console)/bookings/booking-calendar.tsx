@@ -207,7 +207,7 @@ export function BookingCalendar({
             <ChevronRight className="size-4" strokeWidth={1.75} />
           </Button>
         </div>
-        <h2 className="min-w-0 text-[15px] font-semibold tracking-tight text-ink" aria-live="polite">
+        <h2 className="min-w-0 font-display text-[15px] font-semibold tracking-tight text-ink" aria-live="polite">
           {title}
         </h2>
         <Button size="sm" className="ml-1" disabled={showingToday} onClick={() => setAnchor(todayStart)}>

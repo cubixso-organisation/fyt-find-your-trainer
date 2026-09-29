@@ -1,9 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Outfit } from "next/font/google";
+import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import "./globals.css";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+// Satoshi is not on Google Fonts; it is self-hosted from Fontshare (ITF FFL,
+// see ./fonts/LICENSE-Satoshi.txt). One variable file covers 300–900.
+const satoshi = localFont({
+  src: "./fonts/Satoshi-Variable.woff2",
+  variable: "--font-satoshi",
+  weight: "300 900",
+  style: "normal",
+  display: "swap",
+});
+const outfit = Outfit({ variable: "--font-outfit", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -21,7 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} min-h-[100dvh] antialiased`}>
+      <body className={`${satoshi.variable} ${outfit.variable} ${geistMono.variable} min-h-[100dvh] antialiased`}>
         {children}
         <Toaster
           position="bottom-right"
