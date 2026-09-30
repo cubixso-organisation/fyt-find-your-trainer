@@ -49,6 +49,7 @@ not taken from the source.
 | Event Manager | vaib215 | https://21st.dev/@vaib215/components/event-manager | Day, Week and Month booking calendar layout. Reference only, no source code included | `src/app/(console)/bookings/booking-calendar.tsx` |
 | Segmented Control | ddoemonn | https://21st.dev/@ddoemonn/components/segmented-control | Segmented view switch. Reference only, no source code included | `src/components/ui/choice.tsx` |
 | Auth Page | efferd | https://21st.dev/@efferd/components/auth-page | Split sign-in screen and its background paths | `src/app/(auth)/login/` |
+| Gradient Wave | 21st.dev community, after Stripe's minigl gradient technique | https://21st.dev | Animated WebGL mesh gradient behind the sign-in form, recoloured in the console's paper, stone and marigold | `src/components/ui/gradient-wave.tsx` |
 | OTPVerification | 21st.dev community | https://21st.dev | Sign-in code field | `src/components/ui/otp-input.tsx` |
 
 ## Software packages

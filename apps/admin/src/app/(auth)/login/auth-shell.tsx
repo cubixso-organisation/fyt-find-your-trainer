@@ -10,8 +10,11 @@
  * a headline and three plain capability lines (the console allows no social
  * proof); no "Home" button (there is no public site); ink and marigold
  * instead of slate. The left panel is hidden below `lg`, as in the source.
+ * The right column's radial washes became a slow WebGL mesh gradient
+ * (./auth-gradient.tsx), and the form moved onto a surface card over it.
  */
 import { FytMark, FytWordmark } from "@/components/brand/fyt";
+import { AuthGradient } from "./auth-gradient";
 import { FloatingPaths } from "./floating-paths";
 import { PanelIntro } from "./panel-intro";
 import { ThemeToggle } from "./theme-toggle";
@@ -60,12 +63,10 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
 
       {/* ---------- Right: the auth column ---------- */}
       <div className="relative flex min-h-dvh flex-col overflow-hidden px-4 py-5 sm:px-8">
-        {/* one soft radial wash in ink, top right (the source layers three
-            rotated ones; a single background paints without extra layers) */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(70%_55%_at_85%_0%,color-mix(in_oklch,var(--ink)_5%,transparent),transparent_70%)]"
-        />
+        {/* A slow mesh gradient in paper and marigold (./auth-gradient.tsx)
+            replaces the source's radial washes. The form never sits on it
+            directly: it rests on a surface card. */}
+        <AuthGradient />
 
         <div className="flex items-center justify-between">
           <Lockup className="animate-rise flex items-center gap-3 lg:invisible" />
@@ -73,7 +74,10 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="flex flex-1 items-center justify-center py-6 sm:py-8">
-          <div className="animate-rise w-full max-w-[400px]" style={{ animationDelay: "40ms", animationFillMode: "both" }}>
+          <div
+            className="animate-rise w-full max-w-[464px] rounded-[var(--radius-overlay)] border border-line bg-surface px-5 py-6 shadow-[var(--shadow-overlay)] sm:px-8 sm:py-8"
+            style={{ animationDelay: "40ms", animationFillMode: "both" }}
+          >
             {children}
           </div>
         </div>

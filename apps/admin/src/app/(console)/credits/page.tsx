@@ -142,6 +142,15 @@ const PATTERNS: Credit[] = [
     sourceHref: "https://21st.dev/@efferd/components/auth-page",
   },
   {
+    name: "Gradient Wave",
+    by: "21st.dev community, after Stripe's minigl gradient",
+    use: "Animated WebGL mesh gradient behind the sign-in form, recoloured in paper, stone and marigold.",
+    licence: "Reference, see the file headers",
+    licenceHref: "https://21st.dev",
+    source: "21st.dev",
+    sourceHref: "https://21st.dev",
+  },
+  {
     name: "OTPVerification",
     by: "21st.dev community",
     use: "Interaction reference for the sign-in code field.",
