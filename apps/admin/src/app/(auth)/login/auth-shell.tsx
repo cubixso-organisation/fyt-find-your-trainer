@@ -62,7 +62,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* ---------- Right: the auth column ---------- */}
-      <div className="relative flex min-h-dvh flex-col overflow-hidden px-3 py-5 sm:px-8">
+      <div className="relative flex min-h-dvh flex-col overflow-hidden px-3 py-5 sm:px-8 lg:py-0">
         {/* A slow mesh gradient in paper and marigold (./auth-gradient.tsx)
             replaces the source's radial washes. The form never sits on it
             directly: it rests on a surface card. */}
