@@ -62,20 +62,22 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* ---------- Right: the auth column ---------- */}
-      <div className="relative flex min-h-dvh flex-col overflow-hidden px-4 py-5 sm:px-8">
+      <div className="relative flex min-h-dvh flex-col overflow-hidden px-3 py-5 sm:px-8">
         {/* A slow mesh gradient in paper and marigold (./auth-gradient.tsx)
             replaces the source's radial washes. The form never sits on it
             directly: it rests on a surface card. */}
         <AuthGradient />
 
-        <div className="flex items-center justify-between">
+        {/* At lg the lockup lives in the left panel, so this row floats and
+            the card gets the full height to stay centred without scrolling. */}
+        <div className="flex items-center justify-between lg:absolute lg:inset-x-0 lg:top-0 lg:z-10 lg:px-8 lg:py-5">
           <Lockup className="animate-rise flex items-center gap-3 lg:invisible" />
           <ThemeToggle />
         </div>
 
-        <div className="flex flex-1 items-center justify-center py-6 sm:py-8">
+        <div className="flex flex-1 items-center justify-center py-6 sm:py-8 lg:py-7">
           <div
-            className="animate-rise w-full max-w-[464px] rounded-[var(--radius-overlay)] border border-line bg-surface px-5 py-6 shadow-[var(--shadow-overlay)] sm:px-8 sm:py-8"
+            className="animate-rise w-full max-w-[464px] rounded-[var(--radius-overlay)] border border-line bg-surface px-4 py-6 shadow-[var(--shadow-overlay)] sm:px-8 sm:py-8 lg:py-7"
             style={{ animationDelay: "40ms", animationFillMode: "both" }}
           >
             {children}

@@ -25,7 +25,7 @@ import { useDocumentTheme } from "./use-document-theme";
 // base, then wave layers (later layers surface less often).
 const PALETTE = {
   //         paper      stone      marigold   cream      bright paper
-  light: ["#faf6ef", "#ebe3d8", "#f6cf95", "#faefd6", "#fefbf6"],
+  light: ["#faf6ef", "#ebe3d8", "#f4d5a4", "#faefd6", "#fefbf6"],
   //         ink        espresso   marigold   deep ink   warm stone
   dark: ["#15110e", "#241912", "#5a3a0c", "#0e0c0a", "#2a2119"],
 } as const;
