@@ -16,6 +16,7 @@ import { ROLE_LABEL } from "@/lib/rbac";
 import { cn, relTime } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/primitives";
 import { solarIcon } from "@/components/icons/solar";
+import { UiIcon } from "@/components/icons/ui-icon";
 
 const ICONS: Array<[RegExp, React.ElementType]> = [
   [/^booking\.confirm/, CalendarCheck2],
@@ -104,7 +105,8 @@ export function ActivityFeed({ entries, now, showAllHref }: { entries: AuditEntr
       })}
       {showAllHref ? (
         <li className="px-5 pb-3 pt-1">
-          <Link href={showAllHref} className="text-[13px] font-medium text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink">
+          <Link href={showAllHref} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink">
+            <UiIcon name="audit" className="size-[18px] shrink-0 text-ink-2" />
             Full audit log
           </Link>
         </li>

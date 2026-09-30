@@ -137,6 +137,7 @@ export function ExceptionsPanel({
       {past ? <p className="border-t border-line px-5 py-2 text-[12px] text-ink-3">{past} past exception{past === 1 ? "" : "s"} kept for the audit trail.</p> : null}
 
       <Drawer
+        icon={solarIcon("calendar-add-bold-duotone")}
         open={!!draft}
         onOpenChange={(o) => !o && setDraft(null)}
         title="Add date exception"

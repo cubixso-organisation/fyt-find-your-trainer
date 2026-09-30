@@ -90,6 +90,7 @@ export function InstitutesClient({ rows, areas, categories, stacks, openNew, now
       />
 
       <Drawer
+        icon={solarIcon("buildings-2-bold-duotone")}
         open={!!e}
         onOpenChange={(o) => !o && setE(null)}
         title={e?.id ? e.name || "Edit institute" : "New institute"}

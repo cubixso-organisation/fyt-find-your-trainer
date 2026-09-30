@@ -289,11 +289,14 @@ export function Panel({ className, children, ...rest }: React.HTMLAttributes<HTM
 }
 
 export function PanelHeader({
+  icon: Icon,
   title,
   description,
   actions,
   className,
 }: {
+  /** Solar two-tone section icon, drawn beside the title. */
+  icon?: React.ElementType;
   title: React.ReactNode;
   description?: React.ReactNode;
   actions?: React.ReactNode;
@@ -303,9 +306,12 @@ export function PanelHeader({
     // Wraps instead of squeezing: when the actions don't fit beside the title
     // they drop to their own line, so the title never collapses to a sliver.
     <header className={cn("flex flex-wrap items-start justify-between gap-x-4 gap-y-3 border-b border-line px-5 py-3.5", className)}>
-      <div className="min-w-[min(100%,11rem)] flex-1">
-        <h2 className="font-display text-[15px] font-semibold tracking-tight text-ink">{title}</h2>
-        {description ? <p className="mt-0.5 text-[13px] text-ink-2">{description}</p> : null}
+      <div className="flex min-w-[min(100%,11rem)] flex-1 items-start gap-2.5">
+        {Icon ? <Icon className="mt-0.5 size-[18px] shrink-0 text-ink-3" aria-hidden /> : null}
+        <div className="min-w-0 flex-1">
+          <h2 className="font-display text-[15px] font-semibold tracking-tight text-ink">{title}</h2>
+          {description ? <p className="mt-0.5 text-[13px] text-ink-2">{description}</p> : null}
+        </div>
       </div>
       {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
     </header>

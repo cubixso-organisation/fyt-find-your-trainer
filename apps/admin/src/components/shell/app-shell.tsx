@@ -9,7 +9,6 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Command } from "cmdk";
 import {
   ChevronsUpDown,
-  ListChecks,
   Lock,
   LogOut,
   Menu,
@@ -17,11 +16,7 @@ import {
   Moon,
   PanelLeftClose,
   PanelLeftOpen,
-  Plus,
-  Search,
-  Send,
   Sun,
-  UserPlus,
   UserRound,
   CornerDownLeft,
   Database,
@@ -34,6 +29,8 @@ import { PERMISSIONS } from "@/lib/rbac";
 import { cn } from "@/lib/utils";
 import { useLocalStorage } from "@/components/ui/use-local-storage";
 import { FytMark, FytWordmark } from "@/components/brand/fyt";
+import { solarIcon } from "@/components/icons/solar";
+import { UiIcon } from "@/components/icons/ui-icon";
 import { logout } from "@/app/(auth)/login/actions";
 
 export interface ShellViewer {
@@ -147,7 +144,7 @@ export function AppShell({
               <span className="hidden sm:inline" aria-hidden>
                 /
               </span>
-              <span className="truncate font-medium text-ink">{current?.label ?? "Profile"}</span>
+              <span className="truncate font-medium text-ink">{current?.label ?? (pathname.startsWith("/credits") ? "Credits & licences" : "Profile")}</span>
             </nav>
             <div className="ml-auto flex items-center gap-2">
               {demo ? (
@@ -163,7 +160,7 @@ export function AppShell({
                 onClick={() => setPaletteOpen(true)}
                 className="group hidden h-9 w-60 items-center gap-2 rounded-[var(--radius-control)] border border-line bg-surface px-3 text-[13px] text-ink-3 transition-[border-color,color,background-color] duration-150 ease-[var(--ease-out-quart)] hover:border-line-strong hover:text-ink-2 md:flex"
               >
-                <Search className="size-4 transition-colors duration-150 group-hover:text-ink-2" strokeWidth={1.5} aria-hidden />
+                <UiIcon name="search" className="size-4 transition-colors duration-150 group-hover:text-ink-2" />
                 Jump to…
                 <span className="ml-auto flex gap-1">
                   <Kbd>⌘</Kbd>
@@ -220,7 +217,7 @@ function Sidebar({
             onClick={onSearch}
             className="mb-3 flex h-8 w-full items-center gap-2 rounded-[var(--radius-control)] px-2.5 text-[13px] text-ink-2 transition-colors hover:bg-line/50 hover:text-ink md:hidden"
           >
-            <Search className="size-4" strokeWidth={1.5} /> Search
+            <UiIcon name="search" className="size-4" /> Search
           </button>
         )}
         {NAV.map((group, gi) => {
@@ -436,6 +433,12 @@ function AccountMenu({ viewer }: { viewer: ShellViewer }) {
               <UserRound className="size-4 text-ink-2" strokeWidth={1.5} /> Profile & security
             </Link>
           </DropdownMenu.Item>
+          <DropdownMenu.Item asChild className={menuItem}>
+            <Link href="/credits">
+              <UiIcon name="certificate" className="size-4 text-ink-2" /> Credits & licences
+            </Link>
+          </DropdownMenu.Item>
+          <DropdownMenu.Separator className="my-1 h-px bg-line" />
           <DropdownMenu.Item className={cn(menuItem, "text-bad")} onSelect={() => void logout()}>
             <LogOut className="size-4" strokeWidth={1.5} /> Sign out
           </DropdownMenu.Item>
@@ -461,12 +464,12 @@ function CommandPalette({
   };
   const pages = allNavItems().filter((i) => perms.has(i.permission));
   const actions: Array<{ label: string; href: string; perm: Permission; hint: string; icon: React.ElementType }> = [
-    { label: "Review bookings that need action", href: "/bookings?view=attention", perm: "bookings", hint: "Bookings", icon: ListChecks },
-    { label: "Add a course or project", href: "/courses?new=1", perm: "courses", hint: "Catalog", icon: Plus },
-    { label: "Add an institute", href: "/institutes?new=1", perm: "institutes", hint: "Catalog", icon: Plus },
-    { label: "Add a trainer, mentor or consultant", href: "/providers?new=1", perm: "providers", hint: "Catalog", icon: Plus },
-    { label: "Send a broadcast", href: "/broadcasts?new=1", perm: "notifications", hint: "Audience", icon: Send },
-    { label: "Invite an operator", href: "/team?invite=1", perm: "team", hint: "Team", icon: UserPlus },
+    { label: "Review bookings that need action", href: "/bookings?view=attention", perm: "bookings", hint: "Bookings", icon: solarIcon("checklist-minimalistic-bold-duotone") },
+    { label: "Add a course or project", href: "/courses?new=1", perm: "courses", hint: "Catalog", icon: solarIcon("document-add-bold-duotone") },
+    { label: "Add an institute", href: "/institutes?new=1", perm: "institutes", hint: "Catalog", icon: solarIcon("buildings-2-bold-duotone") },
+    { label: "Add a trainer, mentor or consultant", href: "/providers?new=1", perm: "providers", hint: "Catalog", icon: solarIcon("square-academic-cap-2-bold-duotone") },
+    { label: "Send a broadcast", href: "/broadcasts?new=1", perm: "notifications", hint: "Audience", icon: solarIcon("plain-2-bold-duotone") },
+    { label: "Invite an operator", href: "/team?invite=1", perm: "team", hint: "Team", icon: solarIcon("user-plus-rounded-bold-duotone") },
   ];
   return (
     <Command.Dialog
@@ -477,7 +480,7 @@ function CommandPalette({
       contentClassName="fixed left-1/2 top-[14vh] z-50 w-[calc(100%-2rem)] max-w-[560px] -translate-x-1/2 overflow-hidden rounded-[var(--radius-overlay)] border border-line bg-raised shadow-[var(--shadow-overlay)] animate-rise"
     >
       <div className="flex items-center gap-2.5 border-b border-line px-4">
-        <Search className="size-4 shrink-0 text-ink-3" strokeWidth={1.5} aria-hidden />
+        <UiIcon name="search" className="size-4 shrink-0 text-ink-3" />
         <Command.Input
           placeholder="Jump to a page or action"
           className="h-12 flex-1 bg-transparent text-[14px] text-ink outline-none placeholder:text-ink-3"

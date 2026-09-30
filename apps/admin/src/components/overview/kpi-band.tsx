@@ -1,11 +1,14 @@
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { cn, fmtNumber } from "@/lib/utils";
+import { UiIcon } from "@/components/icons/ui-icon";
 
 export interface Kpi {
   label: string;
+  /** Solar two-tone icon beside the label. */
+  icon?: React.ElementType;
   value: string;
   /** Change vs previous period; undefined = no comparison available. */
-  delta?: { text: string; direction: "up" | "down" | "flat"; good: boolean };
+  delta?: { text: string; direction: "up" | "down" | "flat"; good: boolean; /** Draw the approved seal instead of the flat dash. */ verified?: boolean };
   hint: string;
 }
 
@@ -15,7 +18,9 @@ export function KpiBand({ items }: { items: Kpi[] }) {
       aria-label="Key figures"
       className="grid grid-cols-2 overflow-hidden rounded-[var(--radius-panel)] border border-line bg-surface lg:grid-cols-4"
     >
-      {items.map((k, i) => (
+      {items.map((k, i) => {
+        const Icon = k.icon;
+        return (
         <div
           key={k.label}
           className={cn(
@@ -25,7 +30,10 @@ export function KpiBand({ items }: { items: Kpi[] }) {
             i === 2 && "lg:border-l",
           )}
         >
-          <p className="text-[12.5px] text-ink-2">{k.label}</p>
+          <p className="flex min-w-0 items-center gap-1.5 text-[12.5px] text-ink-2">
+            {Icon ? <Icon className="size-4 shrink-0 text-ink-3" aria-hidden /> : null}
+            <span className="truncate">{k.label}</span>
+          </p>
           <p className="num truncate text-[26px] font-semibold leading-tight tracking-tight text-ink" title={k.value}>{k.value}</p>
           {/* Wraps as a unit: the delta never splits across lines, the hint
               drops below it when the cell is narrow. */}
@@ -41,6 +49,8 @@ export function KpiBand({ items }: { items: Kpi[] }) {
                   <ArrowUpRight className="size-3.5" strokeWidth={2} aria-hidden />
                 ) : k.delta.direction === "down" ? (
                   <ArrowDownRight className="size-3.5" strokeWidth={2} aria-hidden />
+                ) : k.delta.verified ? (
+                  <UiIcon name="verified" className="size-3.5 text-ok" />
                 ) : (
                   <Minus className="size-3.5" strokeWidth={2} aria-hidden />
                 )}
@@ -50,7 +60,8 @@ export function KpiBand({ items }: { items: Kpi[] }) {
             <span className="text-ink-3">{k.hint}</span>
           </div>
         </div>
-      ))}
+        );
+      })}
     </section>
   );
 }

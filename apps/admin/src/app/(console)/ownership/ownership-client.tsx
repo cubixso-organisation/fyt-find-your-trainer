@@ -4,6 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Crown, LogOut, Wrench } from "lucide-react";
+import { solarIcon } from "@/components/icons/solar";
 import { Button, Field, Input, Panel, PanelHeader, Select } from "@/components/ui/primitives";
 import { ConfirmDialog } from "@/components/ui/overlays";
 import { useServerAction } from "@/components/ui/use-action";
@@ -31,7 +32,7 @@ export function OwnershipClient({
   return (
     <div className="flex max-w-[860px] flex-col gap-6">
       <Panel>
-        <PanelHeader title="Current owner" />
+        <PanelHeader icon={solarIcon("crown-bold-duotone")} title="Current owner" />
         <div className="flex items-center gap-3 px-5 py-4">
           <span className="grid size-9 place-items-center rounded-full bg-accent-soft text-accent-ink">
             <Crown className="size-4" strokeWidth={1.75} aria-hidden />
@@ -44,7 +45,7 @@ export function OwnershipClient({
       </Panel>
 
       <Panel>
-        <PanelHeader title="Transfer ownership" description="Hand the platform to another person, for example when the business changes hands." />
+        <PanelHeader icon={solarIcon("transfer-horizontal-bold-duotone")} title="Transfer ownership" description="Hand the platform to another person, for example when the business changes hands." />
         <div className="flex flex-col gap-4 px-5 py-5">
           {candidates.length === 0 ? (
             <p className="text-[13px] text-ink-2">Ownership can only go to an active super admin. Promote someone to super admin in Team & roles first.</p>
@@ -97,7 +98,7 @@ export function OwnershipClient({
       </Panel>
 
       <Panel className="border-bad/30">
-        <PanelHeader title="Danger zone" />
+        <PanelHeader icon={solarIcon("danger-triangle-bold-duotone")} title="Danger zone" />
         <div className="divide-y divide-line">
           <div className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div>

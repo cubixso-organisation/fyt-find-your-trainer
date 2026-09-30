@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Copy, Plus, Search, Trash2 } from "lucide-react";
+import { Copy, Plus, Trash2 } from "lucide-react";
 import type { AvailabilityException, AvailabilityRule } from "@/lib/data/types";
 import type { SlotBooking } from "@/lib/slots";
 import { Button, EmptyState, Input, Panel, PanelHeader, Select } from "@/components/ui/primitives";
@@ -9,6 +9,7 @@ import { useServerAction } from "@/components/ui/use-action";
 import { cn, minutesToLabel } from "@/lib/utils";
 import { saveAvailability } from "./actions";
 import { solarIcon } from "@/components/icons/solar";
+import { UiIcon } from "@/components/icons/ui-icon";
 import { ExceptionsPanel } from "./exceptions-panel";
 import { SlotPreview } from "./slot-preview";
 
@@ -90,7 +91,7 @@ export function AvailabilityClient({
       <Panel className="h-fit xl:sticky xl:top-20">
         <div className="border-b border-line p-3">
           <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3" strokeWidth={1.5} aria-hidden />
+            <UiIcon name="search" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3" />
             <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Find a trainer or course" className="pl-9" aria-label="Find a trainer or course" />
           </div>
         </div>

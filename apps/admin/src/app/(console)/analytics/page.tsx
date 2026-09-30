@@ -4,6 +4,7 @@ import { requirePermission } from "@/lib/auth";
 import { bookingMix, dailySeries, demandByListing, funnel } from "@/lib/data/queries";
 import { db } from "@/lib/data/store";
 import { PageHeader } from "@/components/ui/primitives";
+import { solarIcon } from "@/components/icons/solar";
 import { KpiBand, countDelta, rateDelta, type Kpi } from "@/components/overview/kpi-band";
 import { fmtNumber, fmtPct, cn } from "@/lib/utils";
 import { AnalyticsCharts } from "./analytics-charts";
@@ -40,10 +41,10 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
   };
 
   const kpis: Kpi[] = [
-    { label: "New learners", value: fmtNumber(regs), delta: countDelta(regs, regsPrev), hint: `vs previous ${days} days` },
-    { label: "Bookings made", value: fmtNumber(bk.length), delta: countDelta(bk.length, bkPrev.length), hint: `vs previous ${days} days` },
-    { label: "Learners who booked", value: fmtPct(conv(bk, from, now)), delta: rateDelta(conv(bk, from, now), conv(bkPrev, prevFrom, from)), hint: "of new, onboarded" },
-    { label: "Attendance", value: fmtPct(att(bk)), delta: rateDelta(att(bk), att(bkPrev)), hint: "of sessions held" },
+    { label: "New learners", icon: solarIcon("user-plus-rounded-bold-duotone"), value: fmtNumber(regs), delta: countDelta(regs, regsPrev), hint: `vs previous ${days} days` },
+    { label: "Bookings made", icon: solarIcon("calendar-add-bold-duotone"), value: fmtNumber(bk.length), delta: countDelta(bk.length, bkPrev.length), hint: `vs previous ${days} days` },
+    { label: "Learners who booked", icon: solarIcon("course-up-bold-duotone"), value: fmtPct(conv(bk, from, now)), delta: rateDelta(conv(bk, from, now), conv(bkPrev, prevFrom, from)), hint: "of new, onboarded" },
+    { label: "Attendance", icon: solarIcon("user-check-rounded-bold-duotone"), value: fmtPct(att(bk)), delta: rateDelta(att(bk), att(bkPrev)), hint: "of sessions held" },
   ];
 
   const series = dailySeries(Math.min(days, 60), now);

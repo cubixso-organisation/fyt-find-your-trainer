@@ -50,6 +50,28 @@ export const NAMES = [
   "shield-check-bold-duotone",
   "user-plus-rounded-bold-duotone",
   "hashtag-square-bold-duotone",
+  // KPI band, panel and drawer headers, command palette, credits
+  "user-check-rounded-bold-duotone",
+  "calendar-date-bold-duotone",
+  "history-bold-duotone",
+  "notification-unread-lines-bold-duotone",
+  "chart-square-bold-duotone",
+  "round-graph-bold-duotone",
+  "pie-chart-2-bold-duotone",
+  "ranking-bold-duotone",
+  "course-up-bold-duotone",
+  "tuning-2-bold-duotone",
+  "bill-list-bold-duotone",
+  "password-bold-duotone",
+  "devices-bold-duotone",
+  "transfer-horizontal-bold-duotone",
+  "layers-minimalistic-bold-duotone",
+  "smartphone-bold-duotone",
+  "pen-new-square-bold-duotone",
+  "plain-2-bold-duotone",
+  "text-bold-duotone",
+  "code-square-bold-duotone",
+  "copyright-bold-duotone",
 ];
 
 const missing = NAMES.filter((n) => !set.icons[n] && !set.aliases?.[n]);

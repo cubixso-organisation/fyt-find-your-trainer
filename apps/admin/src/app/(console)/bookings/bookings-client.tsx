@@ -7,11 +7,9 @@ import {
   CalendarCheck2,
   CalendarDays,
   Copy,
-  Download,
   List,
   MapPin,
   RefreshCw,
-  Video,
 } from "lucide-react";
 import type { BookingRow } from "@/lib/data/queries";
 import { DataTable, type Column } from "@/components/ui/data-table";
@@ -21,6 +19,8 @@ import { ConfirmDialog, Drawer } from "@/components/ui/overlays";
 import { cn, fmtDate, fmtDateTime, fmtTime, relTime } from "@/lib/utils";
 import { cancelBooking, confirmBooking, markOutcome, rescheduleBooking, retryMeetLink, type ActionResult } from "./actions";
 import { solarIcon } from "@/components/icons/solar";
+import { UiIcon } from "@/components/icons/ui-icon";
+import { MeetIcon } from "@/components/icons/brand-icon";
 import { BookingCalendar } from "./booking-calendar";
 import { downloadBookingsCsv, TARGET_LABEL } from "./bookings-csv";
 
@@ -81,7 +81,7 @@ export function BookingsClient({ rows, now, initialView }: { rows: BookingRow[];
       hideBelow: "xl",
       cell: (r) => (
         <span className="inline-flex items-center gap-1.5 text-ink-2">
-          {r.mode === "online" ? <Video className="size-3.5" strokeWidth={1.75} /> : <MapPin className="size-3.5" strokeWidth={1.75} />}
+          {r.mode === "online" ? <MeetIcon className="size-3.5" title="Google Meet" /> : <MapPin className="size-3.5" strokeWidth={1.75} />}
           {r.mode === "online" ? "Online" : "In person"}
         </span>
       ),
@@ -166,7 +166,7 @@ export function BookingsClient({ rows, now, initialView }: { rows: BookingRow[];
               onClick={() => downloadBookingsCsv(sets[view])}
               title={`Exports all ${sets[view].length} bookings in this tab. Search and filters are not applied to the file.`}
             >
-              <Download className="size-4" strokeWidth={1.6} aria-hidden /> Export CSV
+              <UiIcon name="export" className="size-4" /> Export CSV
             </Button>
           }
           empty={
@@ -224,6 +224,7 @@ function BookingDrawer({ booking: b, now, onClose }: { booking: BookingRow | nul
 
   return (
     <Drawer
+      icon={solarIcon("calendar-mark-bold-duotone")}
       open={!!b}
       onOpenChange={(o) => !o && onClose()}
       title={b ? <span className="flex items-center gap-2">Booking <span className="num text-ink-2">{b.ref}</span></span> : ""}
@@ -287,6 +288,7 @@ function BookingDrawer({ booking: b, now, onClose }: { booking: BookingRow | nul
                 <dd>
                   {b.meetLink ? (
                     <span className="flex min-w-0 items-center gap-2">
+                      <MeetIcon className="size-4 shrink-0 text-ink-2" title="Google Meet" />
                       <a href={b.meetLink} target="_blank" rel="noreferrer" title={b.meetLink} className="num min-w-0 truncate text-[13px] text-ink underline decoration-line-strong underline-offset-4">
                         {b.meetLink.replace("https://", "")}
                       </a>

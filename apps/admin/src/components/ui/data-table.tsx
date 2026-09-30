@@ -1,10 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { ChevronDown, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Button, Checkbox, EmptyState, Input, Select } from "./primitives";
 import { cn, fmtNumber } from "@/lib/utils";
 import { solarIcon } from "@/components/icons/solar";
+import { UiIcon } from "@/components/icons/ui-icon";
 
 export interface Column<T> {
   key: string;
@@ -197,10 +198,9 @@ export function DataTable<T>({
       <div className="flex flex-wrap items-center gap-3 border-b border-line px-4 py-3">
         {search ? (
           <div className="group/search relative w-full sm:w-auto sm:min-w-[240px] sm:flex-1 sm:basis-[240px] lg:max-w-[320px]">
-            <Search
+            <UiIcon
+              name="search"
               className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3 transition-colors duration-150 group-focus-within/search:text-ink-2"
-              strokeWidth={1.5}
-              aria-hidden
             />
             <Input
               value={q}

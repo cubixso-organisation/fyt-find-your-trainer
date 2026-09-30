@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { AlertTriangle, Plus, X } from "lucide-react";
+import { solarIcon } from "@/components/icons/solar";
 import { Button, Field, Input, Panel, PanelHeader } from "@/components/ui/primitives";
 import { useServerAction } from "@/components/ui/use-action";
 import { cn } from "@/lib/utils";
@@ -36,7 +37,7 @@ export function SettingsClient({ initial, maintenance, isOwner }: { initial: S; 
       ) : null}
 
       <Panel>
-        <PanelHeader title="General" />
+        <PanelHeader icon={solarIcon("tuning-2-bold-duotone")} title="General" />
         <div className="grid grid-cols-1 gap-4 px-5 py-5 sm:grid-cols-2">
           <Field label="Platform name" htmlFor="pname" hint="Shown in emails and push notifications.">
             <Input id="pname" value={s.platformName} onChange={(e) => set("platformName", e.target.value)} />
@@ -48,7 +49,7 @@ export function SettingsClient({ initial, maintenance, isOwner }: { initial: S; 
       </Panel>
 
       <Panel>
-        <PanelHeader title="Booking rules" description="Applied by the booking Cloud Function, so the app can't bypass them." />
+        <PanelHeader icon={solarIcon("bill-list-bold-duotone")} title="Booking rules" description="Applied by the booking Cloud Function, so the app can't bypass them." />
         <div className="grid grid-cols-1 gap-4 px-5 py-5 sm:grid-cols-2">
           <Field label="Minimum notice (hours)" htmlFor="lead" hint="Learners can't book a slot starting sooner than this.">
             <Input id="lead" type="number" min={0} max={168} value={s.bookingLeadHours} onChange={(e) => set("bookingLeadHours", Number(e.target.value))} className="num" />
@@ -92,7 +93,7 @@ export function SettingsClient({ initial, maintenance, isOwner }: { initial: S; 
       </Panel>
 
       <Panel>
-        <PanelHeader title="Google Meet links" description="How the platform creates a Meet link for each online booking." />
+        <PanelHeader icon={solarIcon("videocamera-record-bold-duotone")} title="Google Meet links" description="How the platform creates a Meet link for each online booking." />
         <div className="flex flex-col gap-3 px-5 py-5">
           {(
             [

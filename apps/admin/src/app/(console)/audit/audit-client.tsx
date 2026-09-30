@@ -1,6 +1,5 @@
 "use client";
 
-import { Download} from "lucide-react";
 import type { AuditEntry } from "@/lib/data/types";
 import { ROLE_LABEL } from "@/lib/rbac";
 import { DataTable, type Column } from "@/components/ui/data-table";
@@ -9,6 +8,7 @@ import { Pill } from "@/components/ui/status";
 import { ACTION_LABEL, iconFor } from "@/components/overview/activity-feed";
 import { fmtDateTime, relTime } from "@/lib/utils";
 import { solarIcon } from "@/components/icons/solar";
+import { UiIcon } from "@/components/icons/ui-icon";
 
 const GROUPS: Record<string, string> = {
   booking: "Bookings",
@@ -127,7 +127,7 @@ export function AuditClient({ entries, actors, now }: { entries: AuditEntry[]; a
       ]}
       toolbar={
         <Button size="sm" onClick={exportCsv}>
-          <Download className="size-4" strokeWidth={1.6} /> Export CSV
+          <UiIcon name="export" className="size-4" /> Export CSV
         </Button>
       }
       empty={{ icon: solarIcon("clipboard-list-bold-duotone"), title: "No entries yet", body: "Operator actions are recorded here as they happen." }}

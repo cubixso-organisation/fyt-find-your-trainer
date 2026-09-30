@@ -98,6 +98,7 @@ export function ProvidersClient({ rows, openNew, initialType }: { rows: Row[]; o
       />
 
       <Drawer
+        icon={solarIcon("square-academic-cap-bold-duotone")}
         open={!!e}
         onOpenChange={(o) => !o && setE(null)}
         title={e?.id ? e.name || "Edit profile" : "New profile"}

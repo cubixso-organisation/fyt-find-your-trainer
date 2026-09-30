@@ -23,7 +23,7 @@
  */
 
 import * as React from "react";
-import { ChevronLeft, ChevronRight, Download, MapPin, Video } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import type { BookingRow } from "@/lib/data/queries";
 import type { BookingStatus, BookingTarget } from "@/lib/data/types";
 import { Button, EmptyState, Select } from "@/components/ui/primitives";
@@ -31,6 +31,8 @@ import { BookingStatusPill, BOOKING_STATUS } from "@/components/ui/status";
 import { Segmented } from "@/components/ui/choice";
 import { useLocalStorage } from "@/components/ui/use-local-storage";
 import { solarIcon } from "@/components/icons/solar";
+import { UiIcon } from "@/components/icons/ui-icon";
+import { MeetIcon } from "@/components/icons/brand-icon";
 import { cn, fmtDate, fmtTime, istDayStart, WEEKDAYS } from "@/lib/utils";
 import { TARGET_LABEL } from "./bookings-csv";
 
@@ -295,7 +297,7 @@ export function BookingCalendar({
               onClick={() => onExport(shownInPeriod)}
               title={`Exports the ${shownInPeriod.length} ${shownInPeriod.length === 1 ? "booking" : "bookings"} shown ${unitPhrase}${activeCount ? ", with these filters" : ""}. Cancelled bookings are not in the calendar.`}
             >
-              <Download className="size-4" strokeWidth={1.6} aria-hidden /> Export CSV
+              <UiIcon name="export" className="size-4" /> Export CSV
             </Button>
           ) : null}
         </div>
@@ -549,7 +551,7 @@ function TimeGrid({
                         {r.learnerName}
                         <span className="text-ink-3">·</span>
                         {r.mode === "online" ? (
-                          <Video className="size-3 shrink-0" strokeWidth={1.75} aria-hidden />
+                          <MeetIcon className="size-3 shrink-0" />
                         ) : (
                           <MapPin className="size-3 shrink-0" strokeWidth={1.75} aria-hidden />
                         )}

@@ -13,12 +13,15 @@ const scrim =
 export function Drawer({
   open,
   onOpenChange,
+  icon: Icon,
   title,
   description,
   children,
   footer,
   width = "max-w-[520px]",
 }: {
+  /** Solar two-tone icon for what the drawer edits. */
+  icon?: React.ElementType;
   open: boolean;
   onOpenChange: (v: boolean) => void;
   title: React.ReactNode;
@@ -59,7 +62,12 @@ export function Drawer({
               scrolled ? "border-line shadow-[var(--shadow-pinned)]" : "border-transparent",
             )}
           >
-            <div className="min-w-0">
+            {Icon ? (
+              <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-accent-soft text-on-accent-soft ring-1 ring-inset ring-accent/30">
+                <Icon className="size-5" aria-hidden />
+              </span>
+            ) : null}
+            <div className="min-w-0 flex-1">
               <Dialog.Title className="font-display text-base font-semibold tracking-tight text-ink">{title}</Dialog.Title>
               {description ? (
                 <Dialog.Description className="mt-0.5 text-[13px] text-ink-2">{description}</Dialog.Description>

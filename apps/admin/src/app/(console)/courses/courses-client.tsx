@@ -144,6 +144,7 @@ export function CoursesClient({
       />
 
       <Drawer
+        icon={solarIcon("notebook-bookmark-bold-duotone")}
         open={!!e}
         onOpenChange={(o) => !o && setEditing(null)}
         title={e?.id ? "Edit listing" : "New listing"}

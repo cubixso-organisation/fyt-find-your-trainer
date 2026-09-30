@@ -4,12 +4,13 @@ import * as React from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { toast } from "sonner";
-import { CalendarCheck2, RefreshCw, VideoOff, Clock3, MapPin, Video } from "lucide-react";
+import { CalendarCheck2, RefreshCw, VideoOff, Clock3, MapPin } from "lucide-react";
 import { Button, EmptyState, Panel, PanelHeader, buttonClass } from "@/components/ui/primitives";
 import { ConfirmDialog } from "@/components/ui/overlays";
 import { cancelBooking, confirmBooking, retryMeetLink } from "@/app/(console)/bookings/actions";
 import { fmtDate, fmtTime, relTime } from "@/lib/utils";
 import { solarIcon } from "@/components/icons/solar";
+import { MeetIcon } from "@/components/icons/brand-icon";
 
 export interface QueueRow {
   id: string;
@@ -42,6 +43,7 @@ export function AttentionQueue({ rows, now }: { rows: QueueRow[]; now: number })
   return (
     <Panel>
       <PanelHeader
+        icon={solarIcon("notification-unread-lines-bold-duotone")}
         title="Needs action"
         description={
           rows.length
@@ -102,7 +104,7 @@ export function AttentionQueue({ rows, now }: { rows: QueueRow[]; now: number })
                       <span className="text-ink-3">({relTime(r.start, now)})</span>
                       <span aria-hidden>·</span>
                       <span className="inline-flex items-center gap-1">
-                        {r.mode === "online" ? <Video className="size-3.5" strokeWidth={1.75} /> : <MapPin className="size-3.5" strokeWidth={1.75} />}
+                        {r.mode === "online" ? <MeetIcon className="size-3.5" title="Google Meet" /> : <MapPin className="size-3.5" strokeWidth={1.75} />}
                         {r.mode === "online" ? "Online" : "In person"}
                       </span>
                     </p>

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Briefcase, Download, GraduationCap} from "lucide-react";
+import { Briefcase, GraduationCap } from "lucide-react";
 import type { Learner } from "@/lib/data/types";
 import type { BookingRow } from "@/lib/data/queries";
 import { DataTable, type Column } from "@/components/ui/data-table";
@@ -12,6 +12,7 @@ import { useServerAction } from "@/components/ui/use-action";
 import { fmtDate, fmtTime, relTime } from "@/lib/utils";
 import { setLearnerBlocked } from "../audience-actions";
 import { solarIcon } from "@/components/icons/solar";
+import { UiIcon } from "@/components/icons/ui-icon";
 
 type Row = Learner & { bookings: number; attended: number };
 
@@ -119,18 +120,19 @@ export function LearnersClient({ rows, bookingsByLearner, now }: { rows: Row[]; 
         selectable
         bulkActions={(sel) => (
           <Button size="sm" onClick={() => exportCsv(sel)}>
-            <Download className="size-3.5" strokeWidth={1.75} /> Export selected
+            <UiIcon name="export" className="size-3.5" /> Export selected
           </Button>
         )}
         toolbar={
           <Button size="sm" onClick={() => exportCsv(rows)}>
-            <Download className="size-4" strokeWidth={1.6} /> Export
+            <UiIcon name="export" className="size-4" /> Export
           </Button>
         }
         empty={{ icon: solarIcon("users-group-rounded-bold-duotone"), title: "No learners yet", body: "People who sign up in the mobile app appear here after they verify their phone number." }}
       />
 
       <Drawer
+        icon={solarIcon("user-rounded-bold-duotone")}
         open={!!o}
         onOpenChange={(v) => !v && setOpenId(null)}
         title={o?.name ?? ""}

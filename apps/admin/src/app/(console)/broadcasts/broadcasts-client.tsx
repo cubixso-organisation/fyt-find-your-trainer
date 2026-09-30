@@ -39,7 +39,7 @@ export function BroadcastsClient({
   return (
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
       <Panel>
-        <PanelHeader title="New broadcast" />
+        <PanelHeader icon={solarIcon("pen-new-square-bold-duotone")} title="New broadcast" />
         <div className="grid grid-cols-1 gap-6 px-5 py-5 md:grid-cols-[minmax(0,1fr)_240px]">
           <form className="flex flex-col gap-4" onSubmit={(e) => e.preventDefault()}>
             <Field label="Audience" htmlFor="aud" hint={<>Reaches <span className="num">{fmtNumber(reach[audience])}</span> learners with notifications on</>}>
@@ -91,7 +91,7 @@ export function BroadcastsClient({
       </Panel>
 
       <Panel>
-        <PanelHeader title="History" description="Sent and scheduled broadcasts" />
+        <PanelHeader icon={solarIcon("history-bold-duotone")} title="History" description="Sent and scheduled broadcasts" />
         {history.length === 0 ? (
           <EmptyState icon={solarIcon("bell-bing-bold-duotone")} title="Nothing sent yet" body="Your first broadcast will show here with its reach." />
         ) : (

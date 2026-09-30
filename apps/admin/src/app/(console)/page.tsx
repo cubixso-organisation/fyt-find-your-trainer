@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requestTime } from "@/lib/clock";
-import { MapPin, Video } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { requireViewer } from "@/lib/auth";
 import { attentionBookings, overviewMetrics, todaysBookings } from "@/lib/data/queries";
 import { db } from "@/lib/data/store";
@@ -12,6 +12,7 @@ import { KpiBand, countDelta, rateDelta, type Kpi } from "@/components/overview/
 import { AttentionQueue } from "@/components/overview/attention-queue";
 import { ActivityFeed } from "@/components/overview/activity-feed";
 import { solarIcon } from "@/components/icons/solar";
+import { MeetIcon } from "@/components/icons/brand-icon";
 
 export const metadata = { title: "Overview" };
 
@@ -38,13 +39,14 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
   const deniedDef = PERMISSIONS.find((p) => p.key === denied);
 
   const kpis: Kpi[] = [
-    { label: "New learners", value: fmtNumber(m.regs.current), delta: countDelta(m.regs.current, m.regs.previous), hint: "vs previous 7 days" },
-    { label: "Bookings made", value: fmtNumber(m.booked.current), delta: countDelta(m.booked.current, m.booked.previous), hint: "vs previous 7 days" },
-    { label: "Attendance", value: fmtPct(m.attendance.current), delta: rateDelta(m.attendance.current, m.attendance.previous), hint: "of sessions held" },
+    { label: "New learners", icon: solarIcon("user-plus-rounded-bold-duotone"), value: fmtNumber(m.regs.current), delta: countDelta(m.regs.current, m.regs.previous), hint: "vs previous 7 days" },
+    { label: "Bookings made", icon: solarIcon("calendar-add-bold-duotone"), value: fmtNumber(m.booked.current), delta: countDelta(m.booked.current, m.booked.previous), hint: "vs previous 7 days" },
+    { label: "Attendance", icon: solarIcon("user-check-rounded-bold-duotone"), value: fmtPct(m.attendance.current), delta: rateDelta(m.attendance.current, m.attendance.previous), hint: "of sessions held" },
     {
       label: "Meet links working",
+      icon: solarIcon("videocamera-record-bold-duotone"),
       value: fmtPct(m.meetRate),
-      delta: m.meetRate >= 0.999 ? { text: "on target", direction: "flat", good: true } : { text: "under target", direction: "down", good: false },
+      delta: m.meetRate >= 0.999 ? { text: "on target", direction: "flat", good: true, verified: true } : { text: "under target", direction: "down", good: false },
       hint: `of ${m.meetSample} online`,
     },
   ];
@@ -100,6 +102,7 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
           {canBookings ? (
             <Panel>
               <PanelHeader
+                icon={solarIcon("calendar-date-bold-duotone")}
                 title="Today"
                 description={`${today.length} session${today.length === 1 ? "" : "s"}, times in IST`}
                 actions={
@@ -131,7 +134,7 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
                         <div className="min-w-0">
                           <p className="truncate text-[13.5px] font-medium text-ink" title={b.targetName}>{b.targetName}</p>
                           <p className="mt-0.5 flex min-w-0 items-center gap-1.5 text-[12.5px] text-ink-2">
-                            {b.mode === "online" ? <Video className="size-3.5 shrink-0" strokeWidth={1.75} /> : <MapPin className="size-3.5 shrink-0" strokeWidth={1.75} />}
+                            {b.mode === "online" ? <MeetIcon className="size-3.5 shrink-0" title="Google Meet" /> : <MapPin className="size-3.5 shrink-0" strokeWidth={1.75} />}
                             <span className="truncate">
                               {b.learnerName} · {b.learnerSegment === "corporate" ? "Corporate" : "Student"}
                             </span>
@@ -152,7 +155,7 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
 
         <aside className="flex min-w-0 flex-col gap-6">
           <Panel>
-            <PanelHeader title="Recent activity" description="What operators changed" />
+            <PanelHeader icon={solarIcon("history-bold-duotone")} title="Recent activity" description="What operators changed" />
             <div className="py-2">
               <ActivityFeed entries={activity} now={now} showAllHref={permissions.has("audit") ? "/audit" : undefined} />
             </div>

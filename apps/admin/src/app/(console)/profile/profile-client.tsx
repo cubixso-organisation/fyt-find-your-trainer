@@ -3,6 +3,7 @@
 import * as React from "react";
 import { KeyRound, LogOut, ShieldCheck, Smartphone } from "lucide-react";
 import type { Role } from "@/lib/rbac";
+import { solarIcon } from "@/components/icons/solar";
 import { Button, Field, Input, Panel, PanelHeader } from "@/components/ui/primitives";
 import { RoleBadge } from "@/components/ui/status";
 import { useServerAction } from "@/components/ui/use-action";
@@ -36,7 +37,7 @@ export function ProfileClient({
     <div className="grid max-w-[1000px] grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div className="flex flex-col gap-6">
         <Panel>
-          <PanelHeader title="Your details" />
+          <PanelHeader icon={solarIcon("user-id-bold-duotone")} title="Your details" />
           <form className="grid grid-cols-1 gap-4 px-5 py-5 sm:grid-cols-2" onSubmit={(e) => e.preventDefault()}>
             <Field label="Full name" htmlFor="pn">
               <Input id="pn" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" />
@@ -61,7 +62,7 @@ export function ProfileClient({
         </Panel>
 
         <Panel>
-          <PanelHeader title="Password" description="At least 12 characters with upper and lower case letters and a number." />
+          <PanelHeader icon={solarIcon("password-bold-duotone")} title="Password" description="At least 12 characters with upper and lower case letters and a number." />
           <form
             className="grid grid-cols-1 gap-4 px-5 py-5 sm:grid-cols-2"
             onSubmit={async (e) => {
@@ -93,7 +94,7 @@ export function ProfileClient({
         </Panel>
 
         <Panel>
-          <PanelHeader title="Two-step verification" />
+          <PanelHeader icon={solarIcon("shield-check-bold-duotone")} title="Two-step verification" />
           <div className="flex items-start gap-3 px-5 py-4">
             <span className="grid size-9 shrink-0 place-items-center rounded-[8px] bg-sunken text-ink-2">
               <Smartphone className="size-4" strokeWidth={1.6} aria-hidden />
@@ -110,7 +111,7 @@ export function ProfileClient({
 
       <div className="flex flex-col gap-6">
         <Panel>
-          <PanelHeader title="Your access" />
+          <PanelHeader icon={solarIcon("key-minimalistic-2-bold-duotone")} title="Your access" />
           <div className="flex flex-col gap-3 px-5 py-4">
             <RoleBadge role={role} className="self-start" />
             <ul className="flex flex-wrap gap-1.5">
@@ -122,7 +123,7 @@ export function ProfileClient({
           </div>
         </Panel>
         <Panel>
-          <PanelHeader title="Sessions" />
+          <PanelHeader icon={solarIcon("devices-bold-duotone")} title="Sessions" />
           <div className="flex flex-col gap-3 px-5 py-4 text-[13px]">
             <p className="flex items-center gap-2 text-ink-2">
               <ShieldCheck className="size-4 text-ok" strokeWidth={1.75} aria-hidden />

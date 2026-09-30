@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Star } from "lucide-react";
+import { solarIcon } from "@/components/icons/solar";
 import { Button, Checkbox, Panel, PanelHeader } from "@/components/ui/primitives";
 import { TagInput } from "@/components/ui/choice";
 import { useServerAction } from "@/components/ui/use-action";
@@ -43,7 +44,7 @@ export function ContentClient({
       </div>
       <div className="flex min-w-0 flex-col gap-6">
         <Panel>
-          <PanelHeader title="Categories" description="Top-level filter in the app. Categories used by courses can't be removed." />
+          <PanelHeader icon={solarIcon("layers-minimalistic-bold-duotone")} title="Categories" description="Top-level filter in the app. Categories used by courses can't be removed." />
           <div className="px-5 py-4">
             <TagInput value={categories} onChange={setCategories} placeholder="Add a category" />
             <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[12.5px] text-ink-3">
@@ -56,7 +57,7 @@ export function ContentClient({
           </div>
         </Panel>
         <Panel>
-          <PanelHeader title="Tech stacks" description="Suggestions for listings and the tech-stack filter." />
+          <PanelHeader icon={solarIcon("hashtag-square-bold-duotone")} title="Tech stacks" description="Suggestions for listings and the tech-stack filter." />
           <div className="px-5 py-4">
             <TagInput value={techStacks} onChange={setTechStacks} placeholder="Add a technology" />
           </div>
@@ -85,7 +86,7 @@ function FeaturedPicker({ title, items, value, onChange }: { title: string; item
   const max = 12;
   return (
     <Panel>
-      <PanelHeader title={title} description={<span className="num">{value.length} of {max} slots used</span>} />
+      <PanelHeader icon={solarIcon("star-bold-duotone")} title={title} description={<span className="num">{value.length} of {max} slots used</span>} />
       <ul className="max-h-[300px] divide-y divide-line overflow-y-auto">
         {items.map((i) => {
           const on = value.includes(i.id);
@@ -116,7 +117,7 @@ function PhonePreview({ featured, courses, institutes, providers }: { featured: 
   ];
   return (
     <Panel>
-      <PanelHeader title="Home preview" description="Approximate layout of the app's home feed." />
+      <PanelHeader icon={solarIcon("smartphone-bold-duotone")} title="Home preview" description="Approximate layout of the app's home feed." />
       <div className="flex justify-center px-5 py-6">
         <div className="w-[260px] rounded-[28px] border border-line-strong bg-paper p-3 shadow-[var(--shadow-overlay)]">
           <div className="mx-auto mb-3 h-1 w-14 rounded-full bg-line-strong" />

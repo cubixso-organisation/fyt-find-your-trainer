@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { BarList, Legend, StackedColumns, ViewToggle, type Series } from "@/components/charts/charts";
+import { solarIcon } from "@/components/icons/solar";
 import { Panel, PanelHeader } from "@/components/ui/primitives";
 import { fmtNumber, fmtPct } from "@/lib/utils";
 
@@ -33,6 +34,7 @@ export function AnalyticsCharts({
     <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
       <Panel>
         <PanelHeader
+          icon={solarIcon("chart-square-bold-duotone")}
           title="New learners per day"
           description={`Last ${series.length} days, by segment`}
           actions={<ViewToggle table={regTable} onChange={setRegTable} />}
@@ -44,7 +46,7 @@ export function AnalyticsCharts({
       </Panel>
 
       <Panel>
-        <PanelHeader title="From sign-up to attended demo" description={`Learners who joined in the last ${days} days`} />
+        <PanelHeader icon={solarIcon("course-up-bold-duotone")} title="From sign-up to attended demo" description={`Learners who joined in the last ${days} days`} />
         <div className="px-5 py-4">
           <BarList
             items={funnel.map((f) => ({ label: f.stage, value: f.count }))}
@@ -64,6 +66,7 @@ export function AnalyticsCharts({
 
       <Panel>
         <PanelHeader
+          icon={solarIcon("round-graph-bold-duotone")}
           title="Bookings made per day"
           description={`Last ${series.length} days`}
           actions={<ViewToggle table={bkTable} onChange={setBkTable} />}
@@ -80,7 +83,7 @@ export function AnalyticsCharts({
       </Panel>
 
       <Panel>
-        <PanelHeader title="What learners book" description={`${fmtNumber(mix.reduce((s, m) => s + m.value, 0))} bookings in ${days} days`} />
+        <PanelHeader icon={solarIcon("pie-chart-2-bold-duotone")} title="What learners book" description={`${fmtNumber(mix.reduce((s, m) => s + m.value, 0))} bookings in ${days} days`} />
         <div className="flex flex-col gap-5 px-5 py-4">
           <BarList items={mix} />
           {total ? (
@@ -104,7 +107,7 @@ export function AnalyticsCharts({
       </Panel>
 
       <Panel className="xl:col-span-2">
-        <PanelHeader title="Listings pulling the most demand" description={`Top ${demand.length} by bookings in ${days} days, with how many of those were attended`} />
+        <PanelHeader icon={solarIcon("ranking-bold-duotone")} title="Listings pulling the most demand" description={`Top ${demand.length} by bookings in ${days} days, with how many of those were attended`} />
         <div className="px-5 py-4">
           <BarList
             items={demand.map((x) => ({ label: x.name, value: x.bookings, sub: x.type === "course" ? "Course" : x.type[0].toUpperCase() + x.type.slice(1) }))}

@@ -175,7 +175,7 @@ function PermissionMatrix({ defs }: { defs: PermDef[] }) {
   };
   return (
     <Panel className="mt-6">
-      <PanelHeader title="What each role can do" description="Enforced on the server for every page and action, not just hidden in the menu." />
+      <PanelHeader icon={solarIcon("shield-check-bold-duotone")} title="What each role can do" description="Enforced on the server for every page and action, not just hidden in the menu." />
       <div className="overflow-x-auto">
         <table className="w-full text-[13px]">
           <caption className="sr-only">Permission matrix</caption>
@@ -280,6 +280,7 @@ function OperatorDrawer({
 
   return (
     <Drawer
+      icon={solarIcon("shield-user-bold-duotone")}
       open
       onOpenChange={(v) => !v && onClose()}
       title={o.name}
@@ -425,6 +426,7 @@ function InviteDrawer({ open, onOpenChange, assignable, grantable }: { open: boo
 
   return (
     <Drawer
+      icon={solarIcon("user-plus-rounded-bold-duotone")}
       open={open}
       onOpenChange={(v) => {
         onOpenChange(v);
