@@ -385,9 +385,23 @@ export function DataTable<T>({
                     aria-selected={selectable ? isSel : undefined}
                     data-selected={isSel || undefined}
                     onClick={onRowClick ? () => onRowClick(r) : undefined}
+                    // Rows that open a drawer are reachable from the keyboard
+                    // too, not only by pointer.
+                    tabIndex={onRowClick ? 0 : undefined}
+                    onKeyDown={
+                      onRowClick
+                        ? (e) => {
+                            if (e.target !== e.currentTarget) return;
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              onRowClick(r);
+                            }
+                          }
+                        : undefined
+                    }
                     className={cn(
                       "group/row border-b border-line last:border-b-0",
-                      onRowClick && "cursor-pointer",
+                      onRowClick && "cursor-pointer focus-visible:outline-2 focus-visible:-outline-offset-2",
                       isSel && "bg-accent-soft/45",
                     )}
                   >

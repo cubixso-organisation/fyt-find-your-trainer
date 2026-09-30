@@ -78,7 +78,8 @@ type StatusFilter = (typeof STATUS_VALUES)[number];
 
 const listingKey = (r: Pick<BookingRow, "targetType" | "targetId">) => `${r.targetType}:${r.targetId}`;
 
-const filterSelect = "h-8 w-auto min-w-[128px] text-[13px]";
+// Two to a row on a phone (listing takes a full row), natural width from sm up.
+const filterSelect = "h-8 min-w-0 grow basis-[calc(50%-4px)] text-[13px] sm:w-auto sm:min-w-[128px] sm:grow-0 sm:basis-auto";
 const filterOn = "border-line-strong bg-sunken font-medium text-ink";
 
 function parts(ms: number) {
@@ -232,7 +233,7 @@ export function BookingCalendar({
           aria-label="Listing"
           value={fListing}
           onChange={(e) => setFListing(e.target.value)}
-          className={cn(filterSelect, "max-w-[190px]", fListing !== ALL && filterOn)}
+          className={cn(filterSelect, "basis-full sm:max-w-[190px]", fListing !== ALL && filterOn)}
         >
           <option value={ALL}>Listing: All</option>
           {listings.groups.map((g) => (
@@ -446,9 +447,9 @@ function TimeGrid({
   const height = HOURS.length * rowH;
 
   return (
-    <div className="overflow-x-auto">
+    <div className="relative overflow-x-auto">
       <div
-        className={cn("grid", days.length > 1 && "min-w-[880px]")}
+        className={cn("grid", days.length > 1 && "min-w-[1000px]")}
         style={{
           gridTemplateColumns: `56px repeat(${days.length}, minmax(0,1fr))`,
         }}
@@ -649,7 +650,7 @@ function MonthGrid({
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div className="relative overflow-x-auto">
       <div className="min-w-[760px]">
         <div className="grid grid-cols-7 border-b border-line">
           {[1, 2, 3, 4, 5, 6, 0].map((dow, i) => (
@@ -728,10 +729,13 @@ function MonthGrid({
                           type="button"
                           onClick={() => onOpen(r.id)}
                           aria-label={`${BOOKING_STATUS[r.status].label}: ${r.targetName} with ${r.learnerName}, ${fmtTime(r.start)}`}
-                          className="flex w-full items-center gap-1.5 rounded-[4px] px-1 py-0.5 text-left text-[11.5px] transition-colors duration-150 ease-[var(--ease-out-quart)] hover:bg-surface"
+                          title={`${fmtTime(r.start)} · ${r.targetName} with ${r.learnerName}`}
+                          // Time over name: side by side, a day cell left the
+                          // listing about 30px and cut it to two letters.
+                          className="flex w-full min-w-0 flex-col items-start rounded-[4px] px-1 py-0.5 text-left text-[11.5px] leading-tight transition-colors duration-150 ease-[var(--ease-out-quart)] hover:bg-surface"
                         >
-                          <span className="num shrink-0 text-ink-3">{fmtTime(r.start)}</span>
-                          <span className="truncate text-ink-2">{r.targetName}</span>
+                          <span className="num text-ink-3">{fmtTime(r.start)}</span>
+                          <span className="w-full truncate text-ink-2">{r.targetName}</span>
                         </button>
                       </li>
                     ))}

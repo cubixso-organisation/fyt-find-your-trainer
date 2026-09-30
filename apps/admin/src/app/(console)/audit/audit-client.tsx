@@ -46,6 +46,7 @@ export function AuditClient({ entries, actors, now }: { entries: AuditEntry[]; a
     {
       key: "who",
       header: "Operator",
+      hideBelow: "sm",
       sortValue: (r) => r.actorName,
       cell: (r) => (
         <div className="min-w-[7.5rem]">
@@ -60,15 +61,19 @@ export function AuditClient({ entries, actors, now }: { entries: AuditEntry[]; a
       cell: (r) => {
         const Icon = iconFor(r.action);
         return (
-          // A floor on the width: on a phone the table scrolls sideways
-          // instead of crushing the sentence to one word per line.
-          <div className="flex min-w-[15rem] items-start gap-2">
+          // A floor on the width so the sentence never collapses to one word
+          // per line. On a phone the Operator column is hidden and its name
+          // rides under the action instead, so the action stays on screen.
+          <div className="flex min-w-[12rem] items-start gap-2">
             <Icon className="mt-0.5 size-4 shrink-0 text-ink-3" strokeWidth={1.6} aria-hidden />
             <div className="min-w-0">
               <p className="text-ink">
                 {ACTION_LABEL[r.action] ?? r.action} {r.target ? <span className="font-medium">{r.target}</span> : null}
               </p>
               {r.detail ? <p className="text-[12px] text-ink-2">{r.detail}</p> : null}
+              <p className="text-[12px] text-ink-3 sm:hidden">
+                by {r.actorName} · {ROLE_LABEL[r.actorRole]}
+              </p>
             </div>
           </div>
         );

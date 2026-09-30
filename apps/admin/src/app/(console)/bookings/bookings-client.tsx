@@ -87,7 +87,7 @@ export function BookingsClient({ rows, now, initialView }: { rows: BookingRow[];
       ),
     },
     { key: "status", header: "Status", sortValue: (r) => r.status, cell: (r) => <BookingStatusPill status={r.status} /> },
-    { key: "ref", header: "Ref", hideBelow: "lg", cell: (r) => <span className="num text-[12.5px] text-ink-2">{r.ref}</span> },
+    { key: "ref", header: "Ref", hideBelow: "xl", cell: (r) => <span className="num whitespace-nowrap text-[12.5px] text-ink-2">{r.ref}</span> },
   ];
 
   const tabs: Array<[View, string, number | null]> = [
