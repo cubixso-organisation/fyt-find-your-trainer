@@ -35,6 +35,7 @@ export function AuditClient({ entries, actors, now }: { entries: AuditEntry[]; a
     {
       key: "at",
       header: "When",
+      hideBelow: "sm",
       sortValue: (r) => r.at,
       cell: (r) => (
         <div className="whitespace-nowrap" title={new Date(r.at).toISOString()}>
@@ -62,8 +63,8 @@ export function AuditClient({ entries, actors, now }: { entries: AuditEntry[]; a
         const Icon = iconFor(r.action);
         return (
           // A floor on the width so the sentence never collapses to one word
-          // per line. On a phone the Operator column is hidden and its name
-          // rides under the action instead, so the action stays on screen.
+          // per line. On a phone the When and Operator columns are hidden and
+          // ride under the action instead, so the action stays on screen.
           <div className="flex min-w-[12rem] items-start gap-2">
             <Icon className="mt-0.5 size-4 shrink-0 text-ink-3" strokeWidth={1.6} aria-hidden />
             <div className="min-w-0">
@@ -73,6 +74,9 @@ export function AuditClient({ entries, actors, now }: { entries: AuditEntry[]; a
               {r.detail ? <p className="text-[12px] text-ink-2">{r.detail}</p> : null}
               <p className="text-[12px] text-ink-3 sm:hidden">
                 by {r.actorName} · {ROLE_LABEL[r.actorRole]}
+              </p>
+              <p className="text-[12px] text-ink-3 sm:hidden" title={new Date(r.at).toISOString()}>
+                <span className="num">{fmtDateTime(r.at)}</span> · {relTime(r.at, now)}
               </p>
             </div>
           </div>
