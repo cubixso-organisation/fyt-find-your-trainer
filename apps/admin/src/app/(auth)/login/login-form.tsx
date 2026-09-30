@@ -2,10 +2,11 @@
 
 /**
  * Step 1 of sign-in, in the "Auth Page" column order (see ./auth-shell.tsx):
- * social button, "or" separator, then the methods.
+ * provider buttons, "or" separator, then the methods.
  *
- *  - Google: shown but disabled, with the reason, until an OAuth client
- *    exists (src/lib/auth/oauth-google.ts). Never faked.
+ *  - Google and SSO: neither is configured yet (src/lib/auth/oauth-google.ts,
+ *    src/lib/auth/sso.ts). The buttons look and focus like any other, and a
+ *    click explains what is missing instead of starting a flow. Never faked.
  *  - Email: work email + password -> `login` (./actions.ts). A correct
  *    password earns a 6-digit code by email, not a session.
  *  - Phone: Indian mobile -> `startPhoneLogin`. Same answer for every
@@ -78,13 +79,28 @@ function withRedirect<S>(fn: (prev: S, form: FormData) => Promise<S>) {
 const submitLogin = withRedirect<LoginState>(login);
 const submitPhone = withRedirect<PhoneState>(startPhoneLogin);
 
-export interface GoogleStatus {
+export interface ProviderStatus {
   enabled: boolean;
   reason: string;
 }
+export type GoogleStatus = ProviderStatus;
 
-export function LoginForm({ next, demo, google }: { next?: string; demo?: boolean; google: GoogleStatus }) {
+type Provider = "google" | "sso";
+const PROVIDER_BUTTON =
+  "flex h-11 w-full items-center justify-center gap-2.5 rounded-[8px] border border-line bg-surface text-[14px] font-medium text-ink transition-colors duration-150 hover:bg-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper";
+
+export function LoginForm({ next, demo, google, sso }: { next?: string; demo?: boolean; google: ProviderStatus; sso: ProviderStatus }) {
   const [method, setMethod] = useState<Method>("email");
+  // Which provider's "not set up" notice is showing, if any.
+  const [notice, setNotice] = useState<Provider | null>(null);
+  const status = { google, sso } as const;
+  const onProvider = (p: Provider) => {
+    // An enabled provider starts its real flow (Google: `startGoogleSignIn`,
+    // SSO: /login/sso; both still TODO in src/lib/auth). Until then a click
+    // only explains what is missing.
+    if (status[p].enabled) return;
+    setNotice(p);
+  };
   const tabs = React.useRef<Record<Method, HTMLButtonElement | null>>({ email: null, phone: null });
   const reduce = usePrefersReducedMotion();
 
@@ -104,20 +120,41 @@ export function LoginForm({ next, demo, google }: { next?: string; demo?: boolea
 
   return (
     <div className="mt-6">
-      {/* Social: Google only, disabled until the OAuth client exists */}
-      <button
-        type="button"
-        disabled={!google.enabled}
-        aria-describedby="google-status"
-        className="flex h-11 w-full items-center justify-center gap-2.5 rounded-[8px] border border-line bg-surface text-[14px] font-medium text-ink transition-colors duration-150 hover:bg-sunken disabled:cursor-not-allowed disabled:text-ink-3 disabled:hover:bg-surface"
-      >
-        <GoogleGlyph className="size-4" />
-        Continue with Google
-      </button>
-      <p id="google-status" className="mt-1.5 flex items-start gap-1.5 text-[12px] leading-snug text-ink-2">
-        <AlertCircle className="mt-px size-3.5 shrink-0 text-ink-3" strokeWidth={1.75} aria-hidden />
-        {google.reason}
-      </p>
+      {/* Providers: Google, then SSO. Neither submits the forms below. */}
+      <div className="space-y-2.5">
+        <button type="button" onClick={() => onProvider("google")} className={PROVIDER_BUTTON}>
+          <GoogleMark className="size-[18px] shrink-0" />
+          Continue with Google
+        </button>
+        <button type="button" onClick={() => onProvider("sso")} className={PROVIDER_BUTTON}>
+          <KeyRound className="size-[18px] shrink-0 text-ink" strokeWidth={1.75} aria-hidden />
+          Continue with SSO
+        </button>
+      </div>
+      <div role="status">
+        <AnimatePresence initial={false} mode="wait">
+          {notice ? (
+            <motion.div
+              key={notice}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: reduce ? 0 : 0.22, ease: [0.25, 1, 0.5, 1] }}
+              className="overflow-hidden"
+            >
+              <p className="mt-2.5 flex items-start gap-2.5 rounded-[var(--radius-panel)] bg-sunken px-3.5 py-3 text-[13px] leading-snug text-ink-2 ring-1 ring-inset ring-line">
+                <AlertCircle className="mt-px size-4 shrink-0 text-ink-2" strokeWidth={1.75} aria-hidden />
+                <span>
+                  <span className="font-medium text-ink">
+                    {notice === "google" ? "Google sign-in isn\u2019t available for this workspace." : "SSO isn\u2019t available for this workspace."}
+                  </span>{" "}
+                  {status[notice].reason} Use your email or phone below.
+                </span>
+              </p>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </div>
 
       <div className="my-5 flex items-center gap-3" role="separator" aria-label="or">
         <span className="h-px flex-1 bg-line" />
@@ -635,10 +672,14 @@ function DemoCards({
 }
 
 /** Monochrome "G" (brand glyph in currentColor, to stay in the ink palette). */
-function GoogleGlyph({ className }: { className?: string }) {
+/** The standard four-colour Google "G". Fixed fills: never follows currentColor. */
+function GoogleMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" className={className} aria-hidden fill="currentColor">
-      <path d="M21.35 11.1h-9.17v2.98h5.3c-.23 1.4-1.6 4.1-5.3 4.1-3.19 0-5.8-2.64-5.8-5.9s2.61-5.9 5.8-5.9c1.82 0 3.04.78 3.73 1.44l2.54-2.45C16.84 3.9 14.72 3 12.18 3 7.1 3 3 7.1 3 12.28s4.1 9.28 9.18 9.28c5.3 0 8.8-3.72 8.8-8.97 0-.6-.06-1.06-.13-1.5Z" />
+    <svg viewBox="0 0 24 24" className={className} aria-hidden>
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
     </svg>
   );
 }

@@ -3,16 +3,18 @@
  *
  * Layout: ./auth-shell.tsx (after the "Auth Page" component by efferd on
  * 21st.dev). Step 1 never creates a session; it earns a 6-digit code checked
- * on /login/verify. No social proof anywhere: the left panel shows fictional
- * demo sessions, badged "Demo".
+ * on /login/verify. No social proof anywhere: the left panel is a headline and
+ * three plain capability lines.
  */
 import type { Metadata } from "next";
 import { Timer, UserPlus, AlertCircle } from "lucide-react";
 import { DATA_SOURCE } from "@/lib/data/store";
 import { safeNext } from "@/lib/auth/identifiers";
 import { googleOAuthStatus } from "@/lib/auth/oauth-google";
+import { ssoStatus } from "@/lib/auth/sso";
 import { AuthShell } from "./auth-shell";
 import { LoginForm } from "./login-form";
+import { StepIndicator } from "./step-indicator";
 
 export const metadata: Metadata = { title: "Sign in" };
 
@@ -30,8 +32,8 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <AuthShell>
       <header>
-        <p className="text-[12px] font-medium uppercase tracking-[0.16em] text-ink-2">Step 1 of 2</p>
-        <h1 className="font-display mt-2 text-[26px] font-semibold leading-[1.15] tracking-tight text-ink">Sign in to FYT Console</h1>
+        <StepIndicator current={1} />
+        <h1 className="font-display mt-4 text-[26px] font-semibold leading-[1.15] tracking-tight text-ink">Sign in to FYT Console</h1>
         <p className="mt-1.5 text-[14px] leading-relaxed text-ink-2">
           For the FYT operations team. Step 2 is a 6{"\u2011"}digit code we send you.
         </p>
@@ -44,7 +46,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         </p>
       ) : null}
 
-      <LoginForm next={dest === "/" ? undefined : dest} demo={DATA_SOURCE === "demo"} google={googleOAuthStatus()} />
+      <LoginForm next={dest === "/" ? undefined : dest} demo={DATA_SOURCE === "demo"} google={googleOAuthStatus()} sso={ssoStatus()} />
 
       <ul className="mt-6 space-y-2 border-t border-line pt-4 text-[12.5px] leading-snug text-ink-2">
         <li className="flex items-start gap-2.5">

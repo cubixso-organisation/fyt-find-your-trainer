@@ -7,15 +7,13 @@
  * muted left panel carrying animated floating paths and a bottom-up fade,
  * and a centred auth column on the right over soft radial washes. Adapted:
  * FYT lockup instead of a generic logo; the testimonial quote is replaced by
- * the demo session timetable (the console allows no social proof); no "Home"
- * button (there is no public site); ink and marigold instead of slate. The
- * left panel is hidden below `lg`, as in the source.
+ * a headline and three plain capability lines (the console allows no social
+ * proof); no "Home" button (there is no public site); ink and marigold
+ * instead of slate. The left panel is hidden below `lg`, as in the source.
  */
 import { FytMark, FytWordmark } from "@/components/brand/fyt";
-import { istDateKey } from "@/lib/slots";
-import { requestTime } from "@/lib/clock";
 import { FloatingPaths } from "./floating-paths";
-import { LoginTimetable } from "./login-timetable";
+import { PanelIntro } from "./panel-intro";
 import { ThemeToggle } from "./theme-toggle";
 
 function Lockup({ className }: { className?: string }) {
@@ -31,31 +29,25 @@ function Lockup({ className }: { className?: string }) {
 }
 
 export function AuthShell({ children }: { children: React.ReactNode }) {
-  // IST calendar day of this request; the client calendar renders from it,
-  // so server and client markup agree.
-  const todayKey = istDateKey(requestTime());
-
   return (
     <main className="relative isolate min-h-dvh bg-paper lg:grid lg:grid-cols-2">
-      {/* ---------- Left: motion + timetable (lg and up) ---------- */}
-      <aside className="relative hidden h-dvh flex-col overflow-hidden border-r border-line bg-sunken/60 p-10 lg:sticky lg:top-0 lg:flex">
+      {/* ---------- Left: motion + a short introduction (lg and up) ---------- */}
+      <aside className="relative hidden h-dvh flex-col overflow-hidden border-r border-line bg-[var(--auth-panel)] p-10 [--auth-panel:color-mix(in_oklab,var(--sunken)_60%,var(--paper))] lg:sticky lg:top-0 lg:flex xl:p-14">
         <div className="absolute inset-0">
           <FloatingPaths position={1} />
           <FloatingPaths position={-1} />
         </div>
-        {/* bottom-up fade so the timetable sits on a calm ground */}
-        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_40%,color-mix(in_oklch,var(--paper)_75%,transparent))]" />
 
         <Lockup className="animate-rise relative z-10 flex items-center gap-3" />
 
-        <div className="animate-rise relative z-10 mt-auto w-full max-w-[480px]" style={{ animationDelay: "80ms", animationFillMode: "both" }}>
-          <p className="font-display max-w-[420px] text-[24px] font-semibold leading-[1.2] tracking-tight text-ink">
-            Every booking from the app, confirmed and on the right calendar.
-          </p>
-          <p className="mb-6 mt-2 max-w-[420px] text-[14px] leading-relaxed text-ink-2">
-            Bookings, trainers, institutes and payouts for Hyderabad, in one queue.
-          </p>
-          <LoginTimetable todayKey={todayKey} />
+        <div className="relative z-10 mt-auto">
+          {/* Panel-coloured ground that fades in above the copy and runs to
+              the panel's edges, so no stroke ever crosses the text. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -inset-x-14 -bottom-14 -top-36 -z-10 bg-[linear-gradient(to_bottom,transparent,var(--auth-panel)_7.5rem)]"
+          />
+          <PanelIntro />
         </div>
       </aside>
 

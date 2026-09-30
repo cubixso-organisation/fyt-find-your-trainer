@@ -50,7 +50,6 @@ not taken from the source.
 | Segmented Control | ddoemonn | https://21st.dev/@ddoemonn/components/segmented-control | Segmented view switch. Reference only, no source code included | `src/components/ui/choice.tsx` |
 | Auth Page | efferd | https://21st.dev/@efferd/components/auth-page | Split sign-in screen and its background paths | `src/app/(auth)/login/` |
 | OTPVerification | 21st.dev community | https://21st.dev | Sign-in code field | `src/components/ui/otp-input.tsx` |
-| GlassCalendar | 21st.dev community | https://21st.dev | Sign-in timetable | `src/components/ui/timetable-calendar.tsx` |
 
 ## Software packages
 

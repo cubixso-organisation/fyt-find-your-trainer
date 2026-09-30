@@ -142,9 +142,9 @@ const PATTERNS: Credit[] = [
     sourceHref: "https://21st.dev/@efferd/components/auth-page",
   },
   {
-    name: "OTPVerification and GlassCalendar",
+    name: "OTPVerification",
     by: "21st.dev community",
-    use: "Interaction references for the sign-in code field and the sign-in timetable.",
+    use: "Interaction reference for the sign-in code field.",
     licence: "Reference, see the file headers",
     licenceHref: "https://21st.dev",
     source: "21st.dev",

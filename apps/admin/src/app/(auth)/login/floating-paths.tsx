@@ -12,7 +12,8 @@
  *    two strokes per layer are marigold, the console's one accent;
  *  - slightly lower stroke opacity, and the viewBox pinned to the top of the
  *    tall panel (the source centres it), so the strokes sweep through the
- *    open area above the timetable card rather than hiding behind it;
+ *    open upper area; the copy below sits on a panel-coloured fade (see
+ *    ./auth-shell.tsx), so no stroke crosses the text;
  *  - deterministic per-path durations (lint bans Math.random() in render,
  *    and server and client must agree);
  *  - prefers-reduced-motion: a still frame of the same paths, no animation.

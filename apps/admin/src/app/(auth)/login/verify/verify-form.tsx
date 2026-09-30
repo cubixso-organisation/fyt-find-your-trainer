@@ -20,6 +20,7 @@ import { OtpInput, type OtpInputHandle } from "@/components/ui/otp-input";
 import type { ChallengeView } from "@/lib/auth/otp";
 import type { CodeChannel, SignInMethod } from "@/lib/auth/ticket";
 import { resendVerificationCode, restartSignIn, verifyCode, type ResendState, type VerifyState } from "./actions";
+import { StepIndicator } from "../step-indicator";
 import { useDocumentTheme } from "../use-document-theme";
 import { usePrefersReducedMotion } from "../use-reduced-motion";
 
@@ -116,8 +117,8 @@ export function VerifyForm({ destination, method, channel, view, demo, demoCode,
   return (
     <div>
       <header>
-        <p className="text-[12px] font-medium uppercase tracking-[0.16em] text-ink-2">Step 2 of 2</p>
-        <div className="mt-3 grid size-11 place-items-center rounded-[10px] bg-sunken text-ink ring-1 ring-inset ring-line">
+        <StepIndicator current={2} />
+        <div className="mt-4 grid size-11 place-items-center rounded-[10px] bg-sunken text-ink ring-1 ring-inset ring-line">
           <Channel className="size-5" strokeWidth={1.75} aria-hidden />
         </div>
         <h1 className="font-display mt-3 text-[26px] font-semibold leading-[1.15] tracking-tight text-ink">Enter verification code</h1>
