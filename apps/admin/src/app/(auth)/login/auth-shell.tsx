@@ -38,7 +38,14 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           <FloatingPaths position={-1} />
         </div>
 
-        <Lockup className="animate-rise relative z-10 flex items-center gap-3" />
+        <div className="relative z-10 self-start">
+          {/* the same ground, soft-edged, behind the lockup */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -inset-x-16 -inset-y-10 -z-10 bg-[radial-gradient(closest-side,var(--auth-panel)_62%,transparent)]"
+          />
+          <Lockup className="animate-rise flex items-center gap-3" />
+        </div>
 
         <div className="relative z-10 mt-auto">
           {/* Panel-coloured ground that fades in above the copy and runs to
