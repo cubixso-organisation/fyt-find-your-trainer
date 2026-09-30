@@ -8,14 +8,13 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 export const NAMES = ["search", "export", "audit", "verified", "certificate"];
 
-// Traced coordinates carry two decimals on a 400-1200 unit grid; one is
-// already far below a device pixel at the 16-20px these draw at.
-const round = (d) => d.replace(/-?\d*\.\d+/g, (n) => String(Math.round(Number(n) * 10) / 10));
-
+// Paths are copied verbatim. Rounding the coordinates is not safe on these
+// minified paths: a value that rounds to an integer fuses with a following
+// ".42"-style number ("5.02.31" became "50.3") and the path stops drawing.
 const entries = NAMES.map((name) => {
   const svg = readFileSync(new URL(`./ui-icons/${name}.svg`, import.meta.url), "utf8");
   const viewBox = svg.match(/viewBox="([^"]+)"/)?.[1];
-  const paths = [...svg.matchAll(/<path[^>]*\sd="([^"]+)"/g)].map((m) => round(m[1]));
+  const paths = [...svg.matchAll(/<path[^>]*\sd="([^"]+)"/g)].map((m) => m[1]);
   if (!viewBox || paths.length !== 1) {
     console.error(`${name}.svg: expected one <path> and a viewBox`);
     process.exit(1);
