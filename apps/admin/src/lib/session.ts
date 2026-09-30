@@ -37,6 +37,15 @@ function secret(): string {
   return "dev-only-insecure-secret-change-me-please-000";
 }
 
+/**
+ * The same server secret, for the sign-in ticket and code hashes
+ * (src/lib/auth). Those use their own domain-separated HMAC inputs, so
+ * nothing they sign can pass `verifySession`.
+ */
+export function authSecret(): string {
+  return secret();
+}
+
 let keyPromise: Promise<CryptoKey> | null = null;
 function key(): Promise<CryptoKey> {
   keyPromise ??= crypto.subtle.importKey("raw", enc.encode(secret()), { name: "HMAC", hash: "SHA-256" }, false, [

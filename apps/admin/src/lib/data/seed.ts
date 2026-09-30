@@ -81,10 +81,10 @@ export function buildSeed(now = Date.now()): Dataset {
 
   const demoPw = process.env.ADMIN_DEMO_PASSWORD || "Operator@2026";
   const admins: Admin[] = [
-    { id: "adm_owner", name: "Chandra Sekhar P.", email: "owner@demo.local", role: "owner", permissions: [], status: "active", passwordHash: hashPassword(demoPw), tokenVersion: 1, createdAt: now - 60 * DAY, lastLoginAt: now - 2 * HOUR },
+    { id: "adm_owner", name: "Chandra Sekhar P.", email: "owner@demo.local", phone: "+91 94405 62918", role: "owner", permissions: [], status: "active", passwordHash: hashPassword(demoPw), tokenVersion: 1, createdAt: now - 60 * DAY, lastLoginAt: now - 2 * HOUR },
     { id: "adm_super", name: "Lakshmi Prasanna", email: "super@demo.local", phone: "+91 98480 31764", role: "superadmin", permissions: [], status: "active", passwordHash: hashPassword(demoPw), tokenVersion: 1, createdAt: now - 55 * DAY, lastLoginAt: now - 5 * HOUR, invitedBy: "adm_owner" },
     { id: "adm_ops", name: "Ravi Teja Muppidi", email: "admin@demo.local", phone: "+91 90002 47318", role: "admin", permissions: [...DEFAULT_ADMIN_PERMISSIONS], status: "active", passwordHash: hashPassword(demoPw), tokenVersion: 1, createdAt: now - 40 * DAY, lastLoginAt: now - 26 * HOUR, invitedBy: "adm_super" },
-    { id: "adm_content", name: "Sneha Kasturi", email: "sneha@demo.local", role: "admin", permissions: ["overview", "institutes", "courses", "providers", "content"], status: "active", passwordHash: hashPassword(demoPw), tokenVersion: 1, createdAt: now - 21 * DAY, lastLoginAt: now - 3 * DAY, invitedBy: "adm_super" },
+    { id: "adm_content", name: "Sneha Kasturi", email: "sneha@demo.local", phone: "+91 70323 18865", role: "admin", permissions: ["overview", "institutes", "courses", "providers", "content"], status: "active", passwordHash: hashPassword(demoPw), tokenVersion: 1, createdAt: now - 21 * DAY, lastLoginAt: now - 3 * DAY, invitedBy: "adm_super" },
     { id: "adm_invited", name: "Arjun Thota", email: "arjun@demo.local", role: "admin", permissions: ["overview", "bookings"], status: "invited", passwordHash: hashPassword(randomBytes(12).toString("hex")), tokenVersion: 1, createdAt: now - 2 * DAY, invitedBy: "adm_super" },
   ];
 

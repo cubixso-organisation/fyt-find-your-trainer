@@ -12,7 +12,9 @@ import { PERMISSIONS, can, permissionForPath } from "@/lib/rbac";
  */
 export async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
-  const isLogin = path === "/login";
+  // Both sign-in steps: open without a session, and a signed-in operator is
+  // sent to the console instead. /login/verify checks its own tp_mfa ticket.
+  const isLogin = path === "/login" || path === "/login/verify";
   if (path === "/accept-invite") return NextResponse.next();
   const claims = await verifySession(req.cookies.get(SESSION_COOKIE)?.value);
 

@@ -22,6 +22,9 @@ export function db(): Dataset {
  */
 function upgrade(d: Dataset): Dataset {
   if (!d.availabilityExceptions) d.availabilityExceptions = buildSeed().availabilityExceptions;
+  // Demo phone numbers for phone sign-in (added after the first seed).
+  const phones: Record<string, string> = { adm_owner: "+91 94405 62918", adm_content: "+91 70323 18865" };
+  for (const a of d.admins) if (!a.phone && phones[a.id]) a.phone = phones[a.id];
   for (const i of d.institutes) {
     if (!Array.isArray(i.gallery)) {
       i.gallery = [];
